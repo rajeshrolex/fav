@@ -10,19 +10,27 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@heroicons/react": "^2.2.0",
+    "@mui/icons-material": "^9.2.0",
+    "@mui/material": "^9.2.0",
     "@tailwindcss/forms": "^0.5.9",
     "axios": "^1.7.9",
     "chart.js": "^4.4.9",
     "framer-motion": "^11.15.0",
+    "lucide-react": "^1.26.0",
     "multer": "^1.4.5-lts.2",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^18.3.1",
+    "react-helmet-async": "^3.0.0",
+    "react-hook-form": "^7.83.0",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^5.4.0",
     "react-router-dom": "^7.5.1",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "swiper": "^14.0.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
