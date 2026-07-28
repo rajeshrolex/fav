@@ -24,6 +24,21 @@ const slowZoom = keyframes`
   }
 `;
 
+const responsiveWidths = [360, 375, 390, 430, 768, 1024, 1440, 1920];
+
+const buildImageUrl = (url, width) => {
+  if (!url) return url;
+  if (url.includes('w=')) {
+    return url.replace(/([?&])w=\d+/, `$1w=${width}`);
+  }
+
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}w=${width}&auto=format&fit=crop`;
+};
+
+const buildSrcSet = (url) =>
+  responsiveWidths.map((width) => `${buildImageUrl(url, width)} ${width}w`).join(', ');
+
 const HeroBanner = () => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
@@ -32,7 +47,7 @@ const HeroBanner = () => {
     <Box
       sx={{
         width: '100%',
-        height: { xs: '90vh', md: '100vh' },
+        minHeight: '100vh',
         position: 'relative',
         overflow: 'hidden',
         bgcolor: '#0F172A',
@@ -40,11 +55,13 @@ const HeroBanner = () => {
           width: '100%',
           height: '100%',
         },
-        // Premium customized pagination dots
+        '& .swiper-slide': {
+          height: '100%',
+        },
         '& .swiper-pagination-bullet': {
           width: 10,
           height: 10,
-          backgroundColor: 'rgba(255, 255, 255, 0.4)',
+          backgroundColor: 'rgba(255, 255, 255, 0.45)',
           opacity: 1,
           transition: 'all 0.3s ease',
         },
@@ -53,7 +70,6 @@ const HeroBanner = () => {
           borderRadius: 4,
           backgroundColor: theme.palette.primary.main,
         },
-        // Premium customized navigation arrows
         '& .swiper-button-prev, & .swiper-button-next': {
           color: '#FFFFFF',
           width: 50,
@@ -72,8 +88,10 @@ const HeroBanner = () => {
             color: '#FFFFFF',
             boxShadow: `0 0 16px ${theme.palette.primary.main}5A`,
           },
-          display: { xs: 'none', md: 'flex' }
-        }
+          display: { xs: 'none', md: 'flex' },
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
       }}
     >
       <Swiper
@@ -93,7 +111,7 @@ const HeroBanner = () => {
         navigation={true}
         grabCursor={true}
       >
-        {heroSlides.map((slide, index) => (
+        {heroSlides.map((slide) => (
           <SwiperSlide key={slide.id}>
             {({ isActive }) => (
               <Box
@@ -102,157 +120,184 @@ const HeroBanner = () => {
                   width: '100%',
                   height: '100%',
                   display: 'flex',
-                  alignItems: 'center',
+                  alignItems: 'stretch',
                 }}
               >
-                {/* Background image with slow zoom when active */}
                 <Box
+                  component="img"
+                  src={buildImageUrl(slide.image, 1200)}
+                  srcSet={buildSrcSet(slide.image)}
+                  sizes="(max-width: 430px) 100vw, (max-width: 768px) 100vw, 1200px"
+                  alt={slide.heading}
+                  loading="eager"
+                  decoding="async"
+                  fetchpriority="high"
                   sx={{
                     position: 'absolute',
                     inset: 0,
-                    backgroundImage: `url(${slide.image})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    animation: isActive ? `${slowZoom} 10s ease-out forwards` : 'none',
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectPosition: { xs: 'center 30%', md: 'center center' },
+                    animation: isActive ? `${slowZoom} 14s ease-out forwards` : 'none',
                     zIndex: 1,
                   }}
                 />
 
-                {/* Dark gradient overlay */}
                 <Box
                   sx={{
                     position: 'absolute',
                     inset: 0,
-                    background: 'linear-gradient(to right, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.6) 50%, rgba(15, 23, 42, 0.45) 100%)',
+                    background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.72) 0%, rgba(15, 23, 42, 0.46) 42%, rgba(15, 23, 42, 0.18) 100%)',
                     zIndex: 2,
                   }}
                 />
 
-                {/* Content wrapper */}
                 <Container
                   maxWidth="lg"
                   sx={{
                     position: 'relative',
                     zIndex: 3,
                     display: 'flex',
-                    justifyContent: 'flex-start',
-                    pt: { xs: 8, md: 0 },
+                    alignItems: 'center',
+                    height: '100%',
+                    px: { xs: 2, sm: 3 },
+                    py: { xs: 5, md: 0 },
                   }}
                 >
-                  <Paper
+                  <Box
                     sx={{
-                      p: { xs: 3.5, sm: 5, md: 6 },
-                      maxWidth: 680,
-                      borderRadius: 5,
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      background: theme.palette.mode === 'light' 
-                        ? 'rgba(255, 255, 255, 0.08)' 
-                        : 'rgba(17, 27, 53, 0.6)',
-                      backdropFilter: 'blur(16px)',
-                      WebkitBackdropFilter: 'blur(16px)',
-                      boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)',
-                      color: '#FFFFFF',
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: { xs: 'center', md: 'flex-start' },
+                      minHeight: '100%',
                     }}
                   >
-                    {/* Badge */}
-                    <motion.div
-                      initial={{ opacity: 0, y: -20 }}
-                      animate={isActive ? { opacity: 1, y: 0 } : {}}
-                      transition={{ duration: 0.6 }}
+                    <Paper
+                      elevation={0}
+                      sx={{
+                        width: '100%',
+                        maxWidth: 720,
+                        p: { xs: 4, sm: 5, md: 6 },
+                        borderRadius: { xs: 4, md: 5 },
+                        border: '1px solid rgba(255, 255, 255, 0.16)',
+                        background: 'rgba(7, 12, 28, 0.72)',
+                        backdropFilter: 'blur(22px)',
+                        WebkitBackdropFilter: 'blur(22px)',
+                        boxShadow: '0 30px 80px rgba(0, 0, 0, 0.32)',
+                        color: '#FFFFFF',
+                        mx: { xs: 0, md: 0 },
+                        my: { xs: 4, md: 0 },
+                      }}
                     >
-                      <Typography
-                        variant="overline"
-                        sx={{
-                          color: 'primary.light',
-                          fontWeight: 700,
-                          letterSpacing: 1.5,
-                          fontSize: '0.8rem',
-                          mb: 2,
-                          display: 'inline-block',
-                          px: 2,
-                          py: 0.5,
-                          borderRadius: 5,
-                          backgroundColor: 'rgba(245, 124, 0, 0.15)',
-                          border: '1px solid rgba(245, 124, 0, 0.25)',
-                        }}
+                      <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={isActive ? { opacity: 1, y: 0 } : {}}
+                        transition={{ duration: 0.6 }}
                       >
-                        {slide.badge}
-                      </Typography>
-                    </motion.div>
-
-                    {/* Heading */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={isActive ? { opacity: 1, y: 0 } : {}}
-                      transition={{ duration: 0.6, delay: 0.2 }}
-                    >
-                      <Typography
-                        variant="h1"
-                        sx={{
-                          fontWeight: 800,
-                          fontSize: { xs: '2rem', sm: '2.75rem', md: '3.5rem' },
-                          lineHeight: 1.15,
-                          mb: 2.5,
-                          color: '#FFFFFF',
-                          letterSpacing: '-0.02em',
-                        }}
-                      >
-                        {slide.heading}
-                      </Typography>
-                    </motion.div>
-
-                    {/* Description */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={isActive ? { opacity: 1, y: 0 } : {}}
-                      transition={{ duration: 0.6, delay: 0.4 }}
-                    >
-                      <Typography
-                        variant="body1"
-                        sx={{
-                          fontSize: { xs: '0.95rem', md: '1.075rem' },
-                          lineHeight: 1.6,
-                          color: 'rgba(255, 255, 255, 0.85)',
-                          mb: 4.5,
-                          fontWeight: 400,
-                        }}
-                      >
-                        {slide.description}
-                      </Typography>
-                    </motion.div>
-
-                    {/* Action Buttons */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={isActive ? { opacity: 1, y: 0 } : {}}
-                      transition={{ duration: 0.6, delay: 0.6 }}
-                    >
-                      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                        <PrimaryButton
-                          to={slide.primaryBtn.link}
-                          size="large"
-                          endIcon={<ArrowRight size={18} />}
-                        >
-                          {slide.primaryBtn.text}
-                        </PrimaryButton>
-                        <SecondaryButton
-                          to={slide.secondaryBtn.link}
-                          size="large"
-                          startIcon={<Info size={18} />}
+                        <Typography
+                          variant="overline"
                           sx={{
-                            color: '#FFFFFF',
-                            borderColor: 'rgba(255, 255, 255, 0.4)',
-                            '&:hover': {
-                              borderColor: '#FFFFFF',
-                              backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                            }
+                            color: 'primary.light',
+                            fontWeight: 700,
+                            letterSpacing: 1.5,
+                            fontSize: '0.8rem',
+                            mb: 2,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            px: 2,
+                            py: 0.75,
+                            borderRadius: 5,
+                            backgroundColor: 'rgba(245, 124, 0, 0.18)',
+                            border: '1px solid rgba(245, 124, 0, 0.24)',
                           }}
                         >
-                          {slide.secondaryBtn.text}
-                        </SecondaryButton>
-                      </Stack>
-                    </motion.div>
-                  </Paper>
+                          {slide.badge}
+                        </Typography>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={isActive ? { opacity: 1, y: 0 } : {}}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                      >
+                        <Typography
+                          variant="h1"
+                          sx={{
+                            fontWeight: 800,
+                            fontSize: {
+                              xs: 'clamp(2.2rem, 7vw, 2.75rem)',
+                              sm: 'clamp(2.75rem, 5vw, 3.5rem)',
+                              md: 'clamp(3.2rem, 3vw, 4.25rem)',
+                            },
+                            lineHeight: 1.1,
+                            mb: 2.5,
+                            color: '#FFFFFF',
+                            letterSpacing: '-0.03em',
+                          }}
+                        >
+                          {slide.heading}
+                        </Typography>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={isActive ? { opacity: 1, y: 0 } : {}}
+                        transition={{ duration: 0.6, delay: 0.4 }}
+                      >
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            fontSize: { xs: 'clamp(0.95rem, 2vw, 1.05rem)', md: '1.075rem' },
+                            lineHeight: 1.7,
+                            color: 'rgba(255, 255, 255, 0.88)',
+                            mb: 4.5,
+                            fontWeight: 400,
+                          }}
+                        >
+                          {slide.description}
+                        </Typography>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={isActive ? { opacity: 1, y: 0 } : {}}
+                        transition={{ duration: 0.6, delay: 0.6 }}
+                      >
+                        <Stack
+                          direction={{ xs: 'column', sm: 'row' }}
+                          spacing={2}
+                          sx={{ width: '100%', alignItems: { xs: 'stretch', sm: 'center' } }}
+                        >
+                          <PrimaryButton
+                            to={slide.primaryBtn.link}
+                            size="large"
+                            endIcon={<ArrowRight size={18} />}
+                            fullWidth={!isDesktop}
+                          >
+                            {slide.primaryBtn.text}
+                          </PrimaryButton>
+                          <SecondaryButton
+                            to={slide.secondaryBtn.link}
+                            size="large"
+                            startIcon={<Info size={18} />}
+                            fullWidth={!isDesktop}
+                            sx={{
+                              color: '#FFFFFF',
+                              borderColor: 'rgba(255, 255, 255, 0.45)',
+                              '&:hover': {
+                                borderColor: '#FFFFFF',
+                                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                              },
+                            }}
+                          >
+                            {slide.secondaryBtn.text}
+                          </SecondaryButton>
+                        </Stack>
+                      </motion.div>
+                    </Paper>
+                  </Box>
                 </Container>
               </Box>
             )}
