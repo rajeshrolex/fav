@@ -3,8 +3,13 @@ import { lightPalette, darkPalette } from './palette';
 import { typography } from './typography';
 import { components } from './components';
 
-export const getTheme = (mode = 'light') => {
-  const palette = mode === 'light' ? lightPalette : darkPalette;
+export const getTheme = (mode = 'light', primaryColor = null, secondaryColor = null) => {
+  const basePalette = mode === 'light' ? lightPalette : darkPalette;
+  const palette = {
+    ...basePalette,
+    primary: primaryColor ? { ...basePalette.primary, main: primaryColor } : basePalette.primary,
+    secondary: secondaryColor ? { ...basePalette.secondary, main: secondaryColor } : basePalette.secondary
+  };
   return createTheme({
     palette,
     typography,

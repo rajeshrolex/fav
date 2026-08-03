@@ -1,54 +1,93 @@
-import React from 'react';
-import { Box, Grid, Card, CardContent, Typography, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, LinearProgress } from '@mui/material';
-import { Users, Heart, Shield, ArrowUpRight, TrendingUp } from 'lucide-react';
-import { PrimaryButton } from '../../components/common/Buttons';
+import React, { useState, useEffect } from 'react';
+import { Box, Grid, Card, CardContent, Typography, Button, IconButton, Paper, Divider, Stack, Avatar } from '@mui/material';
+import { 
+  Users, Calendar, Heart, Shield, Eye, Bell, ArrowRight, Check, X, Mail 
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
+import api from '../../services/api';
+import toast from 'react-hot-toast';
 
 const Dashboard = () => {
-  const stats = [
-    { title: 'Total Volunteers', value: '2,543', change: '+12% this month', icon: <Users color="#F57C00" size={24} />, bg: 'rgba(245, 124, 0, 0.08)' },
-    { title: 'Donations Collected', value: '₹4,82,500', change: '+24% this week', icon: <Heart color="#EF4444" size={24} />, bg: 'rgba(239, 68, 68, 0.08)' },
-    { title: 'Active Sponsors', value: '18 Partners', change: '+2 new additions', icon: <Shield color="#3B82F6" size={24} />, bg: 'rgba(59, 130, 246, 0.08)' },
-  ];
+  const [stats, setStats] = useState({});
+  const [latestVolunteers, setLatestVolunteers] = useState([]);
+  const [latestMessages, setLatestMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const recentRegistrations = [
-    { id: '1', name: 'Rohan Sharma', role: 'Event Volunteer', date: 'Just now', status: 'Pending Approval' },
-    { id: '2', name: 'Priya Deshmukh', role: 'Medical Camp lead', date: '2 hours ago', status: 'Approved' },
-    { id: '3', name: 'Vikram Jadhav', role: 'Decorations committee', date: '1 day ago', status: 'Approved' },
-    { id: '4', name: 'Neha Patil', role: 'Social Media editor', date: '3 days ago', status: 'Pending Review' },
+  const fetchDashboardData = async () => {
+    try {
+      const res = await api.get('/dashboard.php');
+      if (res.success && res.data) {
+        setStats(res.data.stats || {});
+        setLatestVolunteers(res.data.recentVolunteers || res.data.latest_volunteers || []);
+        setLatestMessages(res.data.recentMessages || res.data.latest_messages || []);
+      }
+    } catch (err) {
+      console.error('Failed to load dashboard data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const handleApproveVolunteer = async (id, status) => {
+    try {
+      const res = await api.post(`/volunteers.php?action=status`, { id, status });
+      if (res.success) {
+        toast.success(`Volunteer status updated to ${status}`);
+        fetchDashboardData();
+      }
+    } catch (err) {
+      // Toast shown by interceptor
+    }
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ textAlign: 'center', py: 10 }}>
+        <Typography>Loading CMS metrics...</Typography>
+      </Box>
+    );
+  }
+
+  const statCards = [
+    { label: 'Total Page Hits', value: stats.visitors ?? stats.total_hits ?? 0, icon: <Eye size={22} />, color: 'primary.main' },
+    { label: 'Upcoming Events', value: stats.events ?? stats.total_events ?? 0, icon: <Calendar size={22} />, color: 'success.main' },
+    { label: 'Gallery Images', value: stats.gallery ?? stats.total_gallery ?? 0, icon: <Shield size={22} />, color: 'info.main' },
+    { label: 'Total Volunteers', value: stats.volunteers ?? stats.total_volunteers ?? 0, icon: <Heart size={22} />, color: 'error.main' },
   ];
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
-          <Typography variant="h3" sx={{ fontWeight: 800 }}>Welcome Back, Aishwarya</Typography>
-          <Typography variant="body2" color="text.secondary">Here is what is happening at Vikrin Hub today.</Typography>
+          <Typography variant="h2" sx={{ fontWeight: 800, fontSize: '1.75rem', mb: 0.5 }}>
+            Welcome Back!
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Here is the current platform status and recent notifications.
+          </Typography>
         </Box>
-        <PrimaryButton endIcon={<ArrowUpRight size={16} />}>Export Report</PrimaryButton>
       </Box>
 
-      {/* Stats Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        {stats.map((stat, idx) => (
-          <Grid item xs={12} sm={6} md={4} key={idx}>
-            <Card sx={{ border: '1px solid', borderColor: 'divider' }}>
-              <CardContent sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      {/* Grid of Stats Cards */}
+      <Grid container spacing={3.5} sx={{ mb: 5 }}>
+        {statCards.map((card, idx) => (
+          <Grid item xs={12} sm={6} md={3} key={idx}>
+            <Card sx={{ border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
+              <CardContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 3 }}>
                 <Box>
-                  <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 705 }}>
-                    {stat.title}
+                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, mb: 1 }}>
+                    {card.label}
                   </Typography>
-                  <Typography variant="h3" sx={{ fontWeight: 800, my: 0.5 }}>
-                    {stat.value}
+                  <Typography variant="h3" sx={{ fontWeight: 800, fontSize: '2rem' }}>
+                    {card.value}
                   </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <TrendingUp size={14} color="#10B981" />
-                    <Typography variant="caption" color="success.main" sx={{ fontWeight: 600 }}>
-                      {stat.change}
-                    </Typography>
-                  </Box>
                 </Box>
-                <Box sx={{ p: 2, borderRadius: 3, bgcolor: stat.bg }}>
-                  {stat.icon}
+                <Box sx={{ p: 2, borderRadius: 3, bgcolor: 'rgba(245, 124, 0, 0.06)', color: card.color }}>
+                  {card.icon}
                 </Box>
               </CardContent>
             </Card>
@@ -56,79 +95,101 @@ const Dashboard = () => {
         ))}
       </Grid>
 
-      {/* Grid Table / Progress */}
       <Grid container spacing={4}>
-        <Grid item xs={12} lg={8}>
-          <Paper sx={{ p: 3, border: '1px solid', borderColor: 'divider' }}>
-            <Typography variant="h4" sx={{ fontSize: '1.2rem', fontWeight: 700, mb: 3 }}>
-              Recent Volunteer Registrations
-            </Typography>
-            
-            <TableContainer>
-              <Table sx={{ minWidth: 600 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 700 }}>Volunteer Name</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Requested Department</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Applied</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }} align="right">Status</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {recentRegistrations.map((row) => (
-                    <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                      <TableCell component="th" scope="row" sx={{ fontWeight: 600 }}>
-                        {row.name}
-                      </TableCell>
-                      <TableCell>{row.role}</TableCell>
-                      <TableCell color="text.secondary">{row.date}</TableCell>
-                      <TableCell align="right">
-                        <Button 
-                          size="small" 
-                          variant="text" 
-                          color={row.status === 'Approved' ? 'success' : 'warning'}
-                          sx={{ fontWeight: 700 }}
-                        >
-                          {row.status}
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+        {/* Column 1: Latest Volunteer Applications */}
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 3, height: '100%', border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3.5 }}>
+              <Typography variant="h4" sx={{ fontWeight: 800, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Users size={18} className="text-orange-500" /> Pending Volunteers
+              </Typography>
+              <Button component={Link} to="/admin/volunteers" size="small" endIcon={<ArrowRight size={14} />}>
+                View All
+              </Button>
+            </Box>
+
+            <Stack spacing={2} divider={<Divider />}>
+              {latestVolunteers.length === 0 ? (
+                <Typography variant="body2" color="text.secondary" sx={{ py: 2, textAlign: 'center' }}>
+                  No pending volunteer applications.
+                </Typography>
+              ) : (
+                latestVolunteers.map((vol) => (
+                  <Box key={vol.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 0.5 }}>
+                    <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+                      <Avatar sx={{ bgcolor: 'primary.main', fontSize: '0.9rem', width: 36, height: 36 }}>
+                        {vol.name.charAt(0)}
+                      </Avatar>
+                      <Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{vol.name}</Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                          Skills: {vol.skills} | Email: {vol.email}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <IconButton size="small" color="success" onClick={() => handleApproveVolunteer(vol.id, 'Approved')}>
+                        <Check size={16} />
+                      </IconButton>
+                      <IconButton size="small" color="error" onClick={() => handleApproveVolunteer(vol.id, 'Rejected')}>
+                        <X size={16} />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                ))
+              )}
+            </Stack>
           </Paper>
         </Grid>
 
-        <Grid item xs={12} lg={4}>
-          <Paper sx={{ p: 3, border: '1px solid', borderColor: 'divider', height: '100%' }}>
-            <Typography variant="h4" sx={{ fontSize: '1.2rem', fontWeight: 700, mb: 3 }}>
-              Fundraising Progress
-            </Typography>
-            
-            <Box sx={{ mb: 4 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="body2" sx={{ fontWeight: 600 }}>Ganesh Decoration Fund</Typography>
-                <Typography variant="body2" color="text.secondary">85%</Typography>
-              </Box>
-              <LinearProgress variant="determinate" value={85} color="primary" sx={{ height: 6, borderRadius: 3 }} />
+        {/* Column 2: Latest Messages Inbox */}
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 3, height: '100%', border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3.5 }}>
+              <Typography variant="h4" sx={{ fontWeight: 800, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Mail size={18} className="text-orange-500" /> Recent Contact Messages
+              </Typography>
+              <Button component={Link} to="/admin/messages" size="small" endIcon={<ArrowRight size={14} />}>
+                Inbox
+              </Button>
             </Box>
 
-            <Box sx={{ mb: 4 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="body2" sx={{ fontWeight: 600 }}>Youth Summit Fund</Typography>
-                <Typography variant="body2" color="text.secondary">60%</Typography>
-              </Box>
-              <LinearProgress variant="determinate" value={60} color="info" sx={{ height: 6, borderRadius: 3 }} />
-            </Box>
-
-            <Box sx={{ mb: 1 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="body2" sx={{ fontWeight: 600 }}>Medical Camp Fund</Typography>
-                <Typography variant="body2" color="text.secondary">95%</Typography>
-              </Box>
-              <LinearProgress variant="determinate" value={95} color="success" sx={{ height: 6, borderRadius: 3 }} />
-            </Box>
+            <Stack spacing={2} divider={<Divider />}>
+              {latestMessages.length === 0 ? (
+                <Typography variant="body2" color="text.secondary" sx={{ py: 2, textAlign: 'center' }}>
+                  No messages received yet.
+                </Typography>
+              ) : (
+                latestMessages.map((msg) => (
+                  <Box key={msg.id} sx={{ py: 0.5 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{msg.name}</Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {new Date(msg.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.8rem', color: 'primary.main', mb: 0.5 }}>
+                      Subject: {msg.subject}
+                    </Typography>
+                    <Typography 
+                      variant="body2" 
+                      color="text.secondary" 
+                      sx={{ 
+                        fontSize: '0.8rem',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        lineHeight: 1.4
+                      }}
+                    >
+                      {msg.message}
+                    </Typography>
+                  </Box>
+                ))
+              )}
+            </Stack>
           </Paper>
         </Grid>
       </Grid>

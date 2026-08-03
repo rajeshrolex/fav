@@ -6,10 +6,25 @@ import { Toaster } from 'react-hot-toast';
 import { getTheme } from './theme';
 import Router from './routes';
 
+import { useConfig } from './context/ConfigContext';
+
 function App() {
-  // Configured with light mode default, toggle mode state is ready for future dark theme integration
-  const [mode, setMode] = useState('light');
-  const theme = getTheme(mode);
+  const { settings, loading } = useConfig();
+
+  // Extract theme settings or use defaults
+  const mode = settings?.theme_mode || 'light';
+  const primaryColor = settings?.theme_primary || null;
+  const secondaryColor = settings?.theme_secondary || null;
+
+  const theme = getTheme(mode, primaryColor, secondaryColor);
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#0F172A', color: '#FFFFFF', fontFamily: 'sans-serif' }}>
+        <h3>Loading Vikrin Community Hub...</h3>
+      </div>
+    );
+  }
 
   return (
     <HelmetProvider>

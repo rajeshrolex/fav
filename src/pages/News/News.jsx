@@ -5,25 +5,74 @@ import { useSearchParams } from 'react-router-dom';
 import SEO from '../../components/seo/SEO';
 import PageHeader from '../../components/common/PageHeader';
 import { SectionWrapper } from '../../components/sections/HomeSections';
-import { newsArticles } from '../../constants/mockData';
+import api from '../../services/api';
+import { useConfig } from '../../context/ConfigContext';
 import { Modal } from '../../components/common/Modals';
 
 const News = () => {
   const [searchParams] = useSearchParams();
+  const { trackVisit } = useConfig();
   const [tabValue, setTabValue] = useState(0);
   const [selectedArticle, setSelectedArticle] = useState(null);
+  
+  const [articles, setArticles] = useState([]);
+  const [categories, setCategories] = useState(['All']);
+  const [seo, setSeo] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const categories = ['All', 'Press Release', 'Community Activity', 'Technology'];
-
-  // Sync URL query ID for direct loading of article
   useEffect(() => {
-    const articleId = searchParams.get('id');
-    if (articleId) {
-      const match = newsArticles.find(n => n.id === articleId);
-      if (match) {
-        setSelectedArticle(match);
+    trackVisit();
+    const fetchNewsData = async () => {
+      try {
+        // Load Page SEO
+        const seoRes = await api.get('/settings.php', { params: { action: 'seo', page: 'news' } });
+        if (seoRes.success && seoRes.data) {
+          setSeo(seoRes.data);
+        }
+
+        // Load news articles
+        const res = await api.get('/news.php');
+        if (res.success && res.data) {
+          const mapped = res.data.map(n => ({
+            id: n.id,
+            title: n.title,
+            slug: n.slug,
+            category: n.category || 'General',
+            author: n.author || 'Admin',
+            summary: n.summary || '',
+            content: n.content,
+            image: n.featured_image,
+            date: n.publish_date
+          }));
+          setArticles(mapped);
+
+          // Find unique categories
+          const cats = ['All'];
+          mapped.forEach(n => {
+            if (n.category && !cats.includes(n.category)) {
+              cats.push(n.category);
+            }
+          });
+          setCategories(cats);
+
+          // Sync URL query ID for direct loading of article
+          const articleId = searchParams.get('id');
+          const articleSlug = searchParams.get('slug');
+          if (articleId) {
+            const match = mapped.find(n => String(n.id) === String(articleId));
+            if (match) setSelectedArticle(match);
+          } else if (articleSlug) {
+            const match = mapped.find(n => n.slug === articleSlug);
+            if (match) setSelectedArticle(match);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load news articles:', err);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+    fetchNewsData();
   }, [searchParams]);
 
   const handleTabChange = (event, newValue) => {
@@ -31,14 +80,26 @@ const News = () => {
   };
 
   const filteredArticles = tabValue === 0
-    ? newsArticles
-    : newsArticles.filter(article => article.category === categories[tabValue]);
+    ? articles
+    : articles.filter(article => article.category === categories[tabValue]);
+
+  if (loading) {
+    return (
+      <Box sx={{ py: 15, textAlign: 'center' }}>
+        <Typography>Loading news articles...</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box>
       <SEO
-        title="News Center & Blog"
-        description="Read official announcements, schedule releases, welfare camp statistics, and executive reports."
+        title={seo?.meta_title || "News Center & Blog"}
+        description={seo?.meta_description || "Read official announcements, schedule releases, welfare camp statistics, and executive reports."}
+        keywords={seo?.meta_keywords}
+        ogTitle={seo?.og_title}
+        ogDescription={seo?.og_description}
+        ogImage={seo?.og_image}
       />
       <PageHeader
         title="News & Articles"
@@ -55,9 +116,16 @@ const News = () => {
             scrollButtons="auto"
             allowScrollButtonsMobile
             aria-label="News category tabs"
+            sx={{
+              '& .MuiTab-root': {
+                fontWeight: 700,
+                fontSize: '0.95rem',
+                pb: 1.5,
+              }
+            }}
           >
             {categories.map((cat, index) => (
-              <Tab label={cat} key={index} sx={{ fontWeight: 650 }} />
+              <Tab label={cat} key={index} />
             ))}
           </Tabs>
         </Box>
@@ -143,11 +211,11 @@ const News = () => {
           <Box sx={{ mb: 2, display: 'flex', gap: 3, color: 'text.secondary' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Calendar size={16} />
-              <Typography variant="caption">{selectedArticle.date}</Typography>
+              <Typography variant="caption">{new Date(selectedArticle.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <User size={16} />
-              <Typography variant="caption">{selectedArticle.category}</Typography>
+              <Typography variant="caption">{selectedArticle.category} (By: {selectedArticle.author})</Typography>
             </Box>
           </Box>
 
@@ -166,9 +234,11 @@ const News = () => {
             }}
           />
 
-          <Typography variant="body1" sx={{ lineHeight: 1.7, color: 'text.secondary' }}>
-            {selectedArticle.content}
-          </Typography>
+          <Typography 
+            variant="body1" 
+            sx={{ lineHeight: 1.7, color: 'text.secondary' }}
+            dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+          />
         </Modal>
       )}
     </Box>

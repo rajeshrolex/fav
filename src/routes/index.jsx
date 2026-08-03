@@ -19,8 +19,20 @@ const News = lazy(() => import('../pages/News/News'));
 const DynamicPage = lazy(() => import('../pages/DynamicPage/DynamicPage'));
 const NotFound = lazy(() => import('../pages/NotFound/NotFound'));
 
-// Admin placeholders
+// Admin Pages
+const AdminLogin = lazy(() => import('../pages/Admin/Login'));
 const AdminDashboard = lazy(() => import('../pages/Admin/Dashboard'));
+const AdminHomeCMS = lazy(() => import('../pages/Admin/HomeCMS'));
+const AdminAboutCMS = lazy(() => import('../pages/Admin/AboutCMS'));
+const AdminCommittee = lazy(() => import('../pages/Admin/CommitteeAdmin'));
+const AdminEvents = lazy(() => import('../pages/Admin/EventsAdmin'));
+const AdminGallery = lazy(() => import('../pages/Admin/GalleryAdmin'));
+const AdminSponsors = lazy(() => import('../pages/Admin/SponsorsAdmin'));
+const AdminVolunteers = lazy(() => import('../pages/Admin/VolunteersAdmin'));
+const AdminMessages = lazy(() => import('../pages/Admin/ContactAdmin'));
+const AdminNews = lazy(() => import('../pages/Admin/NewsAdmin'));
+const AdminMedia = lazy(() => import('../pages/Admin/MediaManager'));
+const AdminSettings = lazy(() => import('../pages/Admin/SettingsAdmin'));
 
 export default function Router() {
   return useRoutes([
@@ -44,15 +56,26 @@ export default function Router() {
       ]
     },
     {
+      path: '/admin-login',
+      element: <AdminLogin />
+    },
+    {
       path: '/admin',
       element: <AdminLayout />,
       children: [
         { path: '', element: <AdminDashboard /> },
-        { path: 'events', element: <AdminDashboard /> }, // maps to dashboard placeholder for simplicity
-        { path: 'volunteers', element: <AdminDashboard /> },
-        { path: 'donations', element: <AdminDashboard /> },
-        { path: 'sponsors', element: <AdminDashboard /> },
-        { path: 'settings', element: <AdminDashboard /> },
+        { path: 'home', element: <AdminHomeCMS /> },
+        { path: 'about', element: <AdminAboutCMS /> },
+        { path: 'committee', element: <AdminCommittee /> },
+        { path: 'events', element: <AdminEvents /> },
+        { path: 'gallery', element: <AdminGallery /> },
+        { path: 'sponsors', element: <AdminSponsors /> },
+        { path: 'volunteers', element: <AdminVolunteers /> },
+        { path: 'messages', element: <AdminMessages /> },
+        { path: 'news', element: <AdminNews /> },
+        { path: 'media', element: <AdminMedia /> },
+        { path: 'settings', element: <AdminSettings /> },
+        { path: '*', element: <Navigate to="/admin" replace /> }
       ]
     }
   ]);

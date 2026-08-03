@@ -1,14 +1,35 @@
-import React from 'react';
-import { Box, Grid, TextField, Typography, Paper, Divider } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Grid, TextField, Typography, Paper } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
-import { Phone, Mail, MapPin, Send } from 'lucide-react';
+import { Phone, Mail, MapPin } from 'lucide-react';
 import SEO from '../../components/seo/SEO';
 import PageHeader from '../../components/common/PageHeader';
 import { SectionWrapper } from '../../components/sections/HomeSections';
 import { PrimaryButton } from '../../components/common/Buttons';
-import toast from 'react-hot-toast';
+import api from '../../services/api';
+import { useConfig } from '../../context/ConfigContext';
 
 const Contact = () => {
+  const { settings, trackVisit } = useConfig();
+  const [seo, setSeo] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Load Page SEO
+  useEffect(() => {
+    trackVisit();
+    const fetchSeo = async () => {
+      try {
+        const seoRes = await api.get('/settings.php', { params: { action: 'seo', page: 'contact' } });
+        if (seoRes.success && seoRes.data) {
+          setSeo(seoRes.data);
+        }
+      } catch (err) {
+        // silent fail
+      }
+    };
+    fetchSeo();
+  }, []);
+
   const { control, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
       name: '',
@@ -19,18 +40,34 @@ const Contact = () => {
     }
   });
 
-  const onSubmit = (data) => {
-    toast.success(`Thank you, ${data.name}! Your message has been sent to our office desk.`, {
-      duration: 5000,
-    });
-    reset();
+  const onSubmit = async (data) => {
+    setSubmitting(true);
+    try {
+      const res = await api.post('/contact.php?action=send', {
+        name: data.name,
+        email: data.email,
+        subject: `${data.subject} (Phone: ${data.phone})`,
+        message: data.message
+      });
+      if (res.success) {
+        reset();
+      }
+    } catch (err) {
+      // Handled by axios interceptor toast
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <Box>
       <SEO
-        title="Contact Us & Offices"
-        description="Get coordinates of the Vikrin Welfare Trust office. Send inquiries about volunteering, registrations, and partnerships."
+        title={seo?.meta_title || "Contact Us & Offices"}
+        description={seo?.meta_description || "Get coordinates of the Vikrin Welfare Trust office. Send inquiries about volunteering, registrations, and partnerships."}
+        keywords={seo?.meta_keywords}
+        ogTitle={seo?.og_title}
+        ogDescription={seo?.og_description}
+        ogImage={seo?.og_image}
       />
       <PageHeader
         title="Contact Us"
@@ -56,7 +93,7 @@ const Contact = () => {
                 <Box>
                   <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Head Office Address</Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, lineHeight: 1.5 }}>
-                    102, Vikrin Plaza, Central Circle, Mumbai - 400001, Maharashtra, India.
+                    {settings?.contact_address || "102, Vikrin Plaza, Central Circle, Mumbai - 400001, Maharashtra, India."}
                   </Typography>
                 </Box>
               </Paper>
@@ -68,10 +105,7 @@ const Contact = () => {
                 <Box>
                   <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Call Desk</Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                    Office Tel: +91 22 2456 7890
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Mobile Helpline: +91 98765 43210
+                    {settings?.contact_phone || "Helpline: +91 98765 43210"}
                   </Typography>
                 </Box>
               </Paper>
@@ -83,10 +117,7 @@ const Contact = () => {
                 <Box>
                   <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Email Support</Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                    General Info: contact@vikrin.org
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Donation Audits: audit@vikrin.org
+                    {settings?.contact_email || "support@vikrin.org"}
                   </Typography>
                 </Box>
               </Paper>
@@ -193,8 +224,8 @@ const Contact = () => {
                   )}
                 />
 
-                <PrimaryButton type="submit" size="large" sx={{ py: 1.5, mt: 1 }}>
-                  Send Message
+                <PrimaryButton type="submit" size="large" sx={{ py: 1.5, mt: 1 }} disabled={submitting}>
+                  {submitting ? 'Sending Message...' : 'Send Message'}
                 </PrimaryButton>
               </Box>
             </Paper>
@@ -203,17 +234,19 @@ const Contact = () => {
       </SectionWrapper>
 
       {/* Embedded Map Section */}
-      <Box sx={{ width: '100%', height: 400, borderTop: 1, borderColor: 'divider' }}>
-        <iframe
-          title="Google Map Office Location"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d120680.125!2d72.825833!3d18.966667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c6306644edc1%3A0x5da4ed8f8d648c69!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
-          width="100%"
-          height="100%"
-          style={{ border: 0 }}
-          allowFullScreen=""
-          loading="lazy"
-        />
-      </Box>
+      {settings?.google_map_iframe && (
+        <Box sx={{ width: '100%', height: 400, borderTop: 1, borderColor: 'divider' }}>
+          <iframe
+            title="Google Map Office Location"
+            src={settings.google_map_iframe}
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen=""
+            loading="lazy"
+          />
+        </Box>
+      )}
     </Box>
   );
 };

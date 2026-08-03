@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper/modules';
 import { Box, Typography, Paper, Container, Stack, useTheme, useMediaQuery } from '@mui/material';
 import { motion } from 'framer-motion';
 import { ArrowRight, Info } from 'lucide-react';
 import { keyframes } from '@mui/system';
-import { heroSlides } from '../../constants/mockData';
+import api from '../../services/api';
 import { PrimaryButton, SecondaryButton } from '../common/Buttons';
 
 // CSS Swiper styles
@@ -42,6 +42,43 @@ const buildSrcSet = (url) =>
 const HeroBanner = () => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+  const [slides, setSlides] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSlides = async () => {
+      try {
+        const res = await api.get('/home.php');
+        if (res.success && res.data) {
+          const mapped = res.data.map(slide => ({
+            id: slide.id,
+            image: slide.image_url,
+            badge: slide.badge || '',
+            heading: slide.heading,
+            description: slide.description || '',
+            primaryBtn: { text: slide.primary_btn_text || 'Explore Events', link: slide.primary_btn_link || '/events' },
+            secondaryBtn: { text: slide.secondary_btn_text || 'Become a Volunteer', link: slide.secondary_btn_link || '/volunteer' }
+          }));
+          setSlides(mapped);
+        }
+      } catch (err) {
+        console.error('Failed to load hero slides:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSlides();
+  }, []);
+
+  if (loading) {
+    return (
+      <Box sx={{ width: '100%', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: '#0F172A', color: '#fff' }}>
+        <Typography variant="h6">Loading Banners...</Typography>
+      </Box>
+    );
+  }
+
+  if (slides.length === 0) return null;
 
   return (
     <Box
@@ -111,7 +148,7 @@ const HeroBanner = () => {
         navigation={true}
         grabCursor={true}
       >
-        {heroSlides.map((slide) => (
+        {slides.map((slide) => (
           <SwiperSlide key={slide.id}>
             {({ isActive }) => (
               <Box

@@ -1,26 +1,72 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Grid, Tabs, Tab, Typography, IconButton } from '@mui/material';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import SEO from '../../components/seo/SEO';
 import PageHeader from '../../components/common/PageHeader';
 import { SectionWrapper } from '../../components/sections/HomeSections';
 import { GalleryCard } from '../../components/cards/Cards';
-import { galleryItems } from '../../constants/mockData';
+import api from '../../services/api';
+import { useConfig } from '../../context/ConfigContext';
 import { Modal } from '../../components/common/Modals';
 
 const Gallery = () => {
+  const { trackVisit } = useConfig();
   const [tabValue, setTabValue] = useState(0);
   const [photoIndex, setPhotoIndex] = useState(null);
+  
+  const [items, setItems] = useState([]);
+  const [categories, setCategories] = useState(['All']);
+  const [seo, setSeo] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const categories = ['All', 'Festivals', 'Social Work', 'Cultural', 'Community'];
+  useEffect(() => {
+    trackVisit();
+    const fetchGalleryData = async () => {
+      try {
+        // Load Page SEO
+        const seoRes = await api.get('/settings.php', { params: { action: 'seo', page: 'gallery' } });
+        if (seoRes.success && seoRes.data) {
+          setSeo(seoRes.data);
+        }
+
+        // Load Gallery items
+        const res = await api.get('/gallery.php');
+        if (res.success && res.data) {
+          const mapped = res.data.map(g => ({
+            id: g.id,
+            title: g.title || 'Gallery Memory',
+            category: g.category || 'General',
+            image: g.media_url,
+            media_type: g.media_type,
+            media_url: g.media_url
+          }));
+          setItems(mapped);
+
+          // Find unique categories
+          const cats = ['All'];
+          mapped.forEach(g => {
+            if (g.category && !cats.includes(g.category)) {
+              cats.push(g.category);
+            }
+          });
+          setCategories(cats);
+        }
+      } catch (err) {
+        console.error('Failed to load gallery items:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchGalleryData();
+  }, []);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
 
   const filteredItems = tabValue === 0
-    ? galleryItems
-    : galleryItems.filter(item => item.category === categories[tabValue]);
+    ? items
+    : items.filter(item => item.category === categories[tabValue]);
 
   const handlePrev = () => {
     setPhotoIndex(prev => (prev === 0 ? filteredItems.length - 1 : prev - 1));
@@ -30,11 +76,23 @@ const Gallery = () => {
     setPhotoIndex(prev => (prev === filteredItems.length - 1 ? 0 : prev + 1));
   };
 
+  if (loading) {
+    return (
+      <Box sx={{ py: 15, textAlign: 'center' }}>
+        <Typography>Loading gallery media...</Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <SEO
-        title="Photo & Video Gallery"
-        description="Browse high-resolution photographs cataloging Ganesh Utsav decorations, volunteer activities, and local events."
+        title={seo?.meta_title || "Photo & Video Gallery"}
+        description={seo?.meta_description || "Browse high-resolution photographs cataloging Ganesh Utsav decorations, volunteer activities, and local events."}
+        keywords={seo?.meta_keywords}
+        ogTitle={seo?.og_title}
+        ogDescription={seo?.og_description}
+        ogImage={seo?.og_image}
       />
       <PageHeader
         title="Photo Gallery"

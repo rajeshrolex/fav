@@ -1,20 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Grid, useTheme, useMediaQuery } from '@mui/material';
 import SEO from '../../components/seo/SEO';
 import PageHeader from '../../components/common/PageHeader';
 import { SectionWrapper } from '../../components/sections/HomeSections';
-import { historyTimeline } from '../../constants/mockData';
+import api from '../../services/api';
+import { useConfig } from '../../context/ConfigContext';
 import { motion } from 'framer-motion';
 
 const FestivalHistory = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { trackVisit } = useConfig();
+
+  const [timeline, setTimeline] = useState([]);
+  const [seo, setSeo] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    trackVisit();
+    const fetchHistoryData = async () => {
+      try {
+        // Load Page SEO
+        const seoRes = await api.get('/settings.php', { params: { action: 'seo', page: 'history' } });
+        if (seoRes.success && seoRes.data) {
+          setSeo(seoRes.data);
+        }
+
+        // Load Timeline History
+        const res = await api.get('/about.php');
+        if (res.success && res.data) {
+          setTimeline(res.data.timeline);
+        }
+      } catch (err) {
+        console.error('Failed to load history timeline:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchHistoryData();
+  }, []);
+
+  if (loading) {
+    return (
+      <Box sx={{ py: 15, textAlign: 'center' }}>
+        <Typography>Loading historical archives...</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box>
       <SEO
-        title="Festival Legacy Timeline"
-        description="Explore the decades-long journey of the Vikrin Community trust and our grand festival history."
+        title={seo?.meta_title || "Festival Legacy Timeline"}
+        description={seo?.meta_description || "Explore the decades-long journey of the Vikrin Community trust and our grand festival history."}
+        keywords={seo?.meta_keywords}
+        ogTitle={seo?.og_title}
+        ogDescription={seo?.og_description}
+        ogImage={seo?.og_image}
       />
       <PageHeader
         title="Festival History"
@@ -24,7 +66,7 @@ const FestivalHistory = () => {
       <SectionWrapper bg="paper">
         <Box sx={{ maxWidth: 850, mx: 'auto', position: 'relative', py: 4 }}>
           {/* Vertical line indicator */}
-          {!isMobile && (
+          {!isMobile && timeline.length > 0 && (
             <Box
               sx={{
                 position: 'absolute',
@@ -38,14 +80,14 @@ const FestivalHistory = () => {
             />
           )}
 
-          {historyTimeline.map((item, index) => {
+          {timeline.map((item, index) => {
             const isEven = index % 2 === 0;
 
             return (
               <Grid
                 container
                 spacing={isMobile ? 2 : 6}
-                key={index}
+                key={item.id || index}
                 sx={{
                   mb: { xs: 5, md: 8 },
                   flexDirection: isMobile ? 'column' : isEven ? 'row' : 'row-reverse',
@@ -127,6 +169,12 @@ const FestivalHistory = () => {
               </Grid>
             );
           })}
+
+          {timeline.length === 0 && (
+            <Typography variant="body1" align="center" color="text.secondary">
+              No historical milestones found.
+            </Typography>
+          )}
         </Box>
       </SectionWrapper>
     </Box>

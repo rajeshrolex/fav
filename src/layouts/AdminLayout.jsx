@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { Box, Drawer, AppBar, Toolbar, List, Typography, Divider, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Avatar, useTheme } from '@mui/material';
-import { LayoutDashboard, Calendar, Users, Heart, Shield, Settings, ArrowLeft, Menu, LogOut } from 'lucide-react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { 
+  LayoutDashboard, Calendar, Users, Heart, Shield, Settings, ArrowLeft, Menu, LogOut, 
+  Home, Info, Clock, Image, FileText, Mail, FolderOpen, Sun, Moon 
+} from 'lucide-react';
+import { Link, Outlet, useLocation, Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useConfig } from '../context/ConfigContext';
 
 const drawerWidth = 260;
 
@@ -9,18 +14,61 @@ const AdminLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const theme = useTheme();
   const location = useLocation();
+  const { user, loading, logout } = useAuth();
+  const { settings, updateSettings } = useConfig();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  const toggleThemeMode = async () => {
+    const currentMode = settings?.theme_mode || 'light';
+    const nextMode = currentMode === 'light' ? 'dark' : 'light';
+    await updateSettings({ ...settings, theme_mode: nextMode });
+  };
+
+  // Guard: if not authenticated and not loading, redirect to login page
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', bgcolor: 'background.default' }}>
+        <Typography>Checking authorization status...</Typography>
+      </Box>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/admin-login" replace />;
+  }
+
+  // Full route map for page title lookup
+  const allRoutes = [
+    { label: 'Dashboard', path: '/admin' },
+    { label: 'Hero & Home CMS', path: '/admin/home' },
+    { label: 'About CMS', path: '/admin/about' },
+    { label: 'Committee Roster', path: '/admin/committee' },
+    { label: 'Events Registry', path: '/admin/events' },
+    { label: 'Gallery Albums', path: '/admin/gallery' },
+    { label: 'Sponsors Board', path: '/admin/sponsors' },
+    { label: 'Volunteers Inbox', path: '/admin/volunteers' },
+    { label: 'Contact Messages', path: '/admin/messages' },
+    { label: 'News Editor', path: '/admin/news' },
+    { label: 'Media Explorer', path: '/admin/media' },
+    { label: 'Website Settings & SEO', path: '/admin/settings' },
+  ];
+
   const adminMenu = [
     { label: 'Dashboard', path: '/admin', icon: <LayoutDashboard size={20} /> },
+    { label: 'Hero & Home CMS', path: '/admin/home', icon: <Home size={20} /> },
+    { label: 'About CMS', path: '/admin/about', icon: <Info size={20} /> },
+    { label: 'Committee Roster', path: '/admin/committee', icon: <Users size={20} /> },
     { label: 'Events Registry', path: '/admin/events', icon: <Calendar size={20} /> },
-    { label: 'Volunteer Roster', path: '/admin/volunteers', icon: <Users size={20} /> },
-    { label: 'Donation Ledgers', path: '/admin/donations', icon: <Heart size={20} /> },
+    { label: 'Gallery Albums', path: '/admin/gallery', icon: <Image size={20} /> },
     { label: 'Sponsors Board', path: '/admin/sponsors', icon: <Shield size={20} /> },
-    { label: 'Settings', path: '/admin/settings', icon: <Settings size={20} /> },
+    { label: 'Volunteers Inbox', path: '/admin/volunteers', icon: <Heart size={20} /> },
+    { label: 'Contact Messages', path: '/admin/messages', icon: <Mail size={20} /> },
+    { label: 'News Editor', path: '/admin/news', icon: <FileText size={20} /> },
+    { label: 'Media Explorer', path: '/admin/media', icon: <FolderOpen size={20} /> },
+    { label: 'Website Settings & SEO', path: '/admin/settings', icon: <Settings size={20} /> },
   ];
 
   const drawerContent = (
@@ -30,18 +78,19 @@ const AdminLayout = () => {
           V
         </Box>
         <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: -0.5 }}>
-          VIKRIN ADMIN
+          VIKRIN CMS
         </Typography>
       </Toolbar>
       <Divider />
       
-      <List sx={{ px: 2, py: 3, flexGrow: 1 }}>
+      <List sx={{ px: 2, py: 1, flexGrow: 1, overflowY: 'auto' }}>
         {adminMenu.map((item) => (
           <ListItem key={item.label} disablePadding sx={{ mb: 0.5 }}>
             <ListItemButton
               component={Link}
               to={item.path}
               selected={location.pathname === item.path}
+              onClick={() => setMobileOpen(false)}
               sx={{
                 borderRadius: 2,
                 '&.Mui-selected': {
@@ -55,7 +104,7 @@ const AdminLayout = () => {
                 {item.icon}
               </ListItemIcon>
               <ListItemText>
-                <Typography sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
                   {item.label}
                 </Typography>
               </ListItemText>
@@ -65,26 +114,41 @@ const AdminLayout = () => {
       </List>
 
       <Divider />
-      <List sx={{ px: 2, py: 2 }}>
+      <List sx={{ px: 2, py: 1 }}>
+        {/* Theme mode switcher */}
+        <ListItem disablePadding sx={{ mb: 0.5 }}>
+          <ListItemButton onClick={toggleThemeMode} sx={{ borderRadius: 2 }}>
+            <ListItemIcon sx={{ minWidth: 40, color: 'text.secondary' }}>
+              {settings?.theme_mode === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </ListItemIcon>
+            <ListItemText>
+              <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
+                {settings?.theme_mode === 'dark' ? 'Light Theme' : 'Dark Theme'}
+              </Typography>
+            </ListItemText>
+          </ListItemButton>
+        </ListItem>
+
         <ListItem disablePadding sx={{ mb: 0.5 }}>
           <ListItemButton component={Link} to="/" sx={{ borderRadius: 2 }}>
             <ListItemIcon sx={{ minWidth: 40, color: 'text.secondary' }}>
               <ArrowLeft size={20} />
             </ListItemIcon>
             <ListItemText>
-              <Typography sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+              <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
                 Exit to Website
               </Typography>
             </ListItemText>
           </ListItemButton>
         </ListItem>
+
         <ListItem disablePadding>
-          <ListItemButton sx={{ borderRadius: 2, color: 'error.main' }}>
+          <ListItemButton onClick={logout} sx={{ borderRadius: 2, color: 'error.main' }}>
             <ListItemIcon sx={{ minWidth: 40, color: 'error.main' }}>
               <LogOut size={20} />
             </ListItemIcon>
             <ListItemText>
-              <Typography sx={{ fontWeight: 600, fontSize: '0.9rem', color: 'inherit' }}>
+              <Typography sx={{ fontWeight: 600, fontSize: '0.85rem', color: 'inherit' }}>
                 Log Out
               </Typography>
             </ListItemText>
@@ -93,6 +157,8 @@ const AdminLayout = () => {
       </List>
     </Box>
   );
+
+  const activeTitle = allRoutes.find(item => item.path === location.pathname)?.label || 'Admin Panel';
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
@@ -107,6 +173,7 @@ const AdminLayout = () => {
           borderBottom: 1,
           borderColor: 'divider',
           boxShadow: 'none',
+          zIndex: (theme) => theme.zIndex.drawer + 1
         }}
       >
         <Toolbar sx={{ px: { xs: 2, sm: 3 }, justifyContent: 'space-between' }}>
@@ -120,15 +187,17 @@ const AdminLayout = () => {
           </IconButton>
           
           <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            {adminMenu.find(item => item.path === location.pathname)?.label || 'Overview'}
+            {activeTitle}
           </Typography>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Box sx={{ textAlign: 'right', display: { xs: 'none', sm: 'block' } }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Aishwarya D.</Typography>
-              <Typography variant="caption" color="text.secondary">Super Administrator</Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{user.username}</Typography>
+              <Typography variant="caption" color="text.secondary">{user.role}</Typography>
             </Box>
-            <Avatar src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=150" alt="Admin Profile" />
+            <Avatar sx={{ bgcolor: 'primary.main', fontWeight: 800 }}>
+              {user.username.charAt(0).toUpperCase()}
+            </Avatar>
           </Box>
         </Toolbar>
       </AppBar>

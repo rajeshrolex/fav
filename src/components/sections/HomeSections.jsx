@@ -42,7 +42,7 @@ export const SectionWrapper = ({ children, bg = 'default', id, sx = {} }) => {
 };
 
 // 1. Welcome & Stats Section
-export const WelcomeSection = () => {
+export const WelcomeSection = ({ stats = statistics, settings = {} }) => {
   return (
     <SectionWrapper bg="paper" id="welcome">
       <Grid container spacing={5} sx={{ alignItems: 'center' }}>
@@ -75,7 +75,7 @@ export const WelcomeSection = () => {
 
         <Grid item xs={12} md={6}>
           <Grid container spacing={3}>
-            {statistics.map((stat, index) => (
+            {stats.map((stat, index) => (
               <Grid item xs={6} key={index}>
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
@@ -122,7 +122,7 @@ export const WelcomeSection = () => {
 };
 
 // 2. About Preview
-export const AboutPreview = () => {
+export const AboutPreview = ({ settings = {} }) => {
   const theme = useTheme();
 
   const pillars = [
@@ -167,7 +167,7 @@ export const AboutPreview = () => {
             transition={{ duration: 0.6 }}
           >
             <Typography variant="body1" color="text.secondary" sx={{ mb: 4, lineHeight: 1.75 }}>
-              For over two decades, the Vikrin Community Trust has been at the forefront of orchestrating cultural celebrations, social initiatives, and public welfare. Through the introduction of the Vikrin Hub portal, we seek to scale local operations by providing youth groups, committees, and trusts with enterprise-ready digital software kits.
+              {settings.about_preview_text1 || "For over two decades, the Vikrin Community Trust has been at the forefront of orchestrating cultural celebrations, social initiatives, and public welfare. Through the introduction of the Vikrin Hub portal, we seek to scale local operations by providing youth groups, committees, and trusts with enterprise-ready digital software kits."}
             </Typography>
 
             {/* Pillar Points */}
@@ -288,10 +288,10 @@ export const AboutPreview = () => {
                 }}
               >
                 <Typography variant="h3" color="primary" sx={{ fontWeight: 800, fontSize: '1.75rem', lineHeight: 1 }}>
-                  25+
+                  {settings.about_preview_years || "25+"}
                 </Typography>
                 <Typography variant="caption" sx={{ fontWeight: 700, display: 'block', color: 'text.secondary', lineHeight: 1.2 }}>
-                  Years of<br />Heritage
+                  {settings.about_preview_years_label || "Years of Heritage"}
                 </Typography>
               </Paper>
             </Box>
@@ -303,7 +303,7 @@ export const AboutPreview = () => {
 };
 
 // 3. Festival History Preview
-export const FestivalHistoryPreview = () => {
+export const FestivalHistoryPreview = ({ timeline = historyTimeline }) => {
   return (
     <SectionWrapper bg="paper" id="history-preview">
       <SectionTitle
@@ -312,7 +312,7 @@ export const FestivalHistoryPreview = () => {
         subtitle="From a small neighborhood street corner to managing regional festivals with thousands of attendees."
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {historyTimeline.slice(0, 3).map((item, idx) => (
+        {timeline.slice(0, 3).map((item, idx) => (
           <div key={idx} className="flex">
             <motion.div
               className="w-full"
@@ -346,8 +346,8 @@ export const FestivalHistoryPreview = () => {
 };
 
 // 4. Upcoming Events
-export const UpcomingEvents = () => {
-  const events = upcomingEvents.filter(e => e.status === 'Upcoming').slice(0, 3);
+export const UpcomingEvents = ({ events = upcomingEvents }) => {
+  const upcomingOnly = events.filter(e => e.status === 'Upcoming').slice(0, 3);
   return (
     <SectionWrapper bg="alternate" id="events-preview">
       <SectionTitle
@@ -356,7 +356,7 @@ export const UpcomingEvents = () => {
         subtitle="Participate in our upcoming cultural programs, social camps, and youth campaigns."
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {events.map((event) => (
+        {upcomingOnly.map((event) => (
           <div key={event.id} className="flex">
             <motion.div
               className="w-full"
@@ -380,7 +380,7 @@ export const UpcomingEvents = () => {
 };
 
 // 5. Committee Preview
-export const CommitteePreview = () => {
+export const CommitteePreview = ({ members = committeeMembers }) => {
   return (
     <SectionWrapper bg="paper" id="committee-preview">
       <SectionTitle
@@ -389,7 +389,7 @@ export const CommitteePreview = () => {
         subtitle="The dedicated individuals steering the planning and executing of our community activities."
       />
       <Grid container spacing={4}>
-        {committeeMembers.slice(0, 4).map((member) => (
+        {members.slice(0, 4).map((member) => (
           <Grid item xs={12} sm={6} md={3} key={member.id}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -412,7 +412,7 @@ export const CommitteePreview = () => {
 };
 
 // 6. Gallery Preview
-export const GalleryPreview = () => {
+export const GalleryPreview = ({ items = galleryItems }) => {
   return (
     <SectionWrapper bg="alternate" id="gallery-preview">
       <SectionTitle
@@ -421,7 +421,7 @@ export const GalleryPreview = () => {
         subtitle="Capturing moments of happiness, dedication, and teamwork during our community drives."
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {galleryItems.slice(0, 3).map((item) => (
+        {items.slice(0, 3).map((item) => (
           <div key={item.id} className="w-full">
             <GalleryCard item={item} />
           </div>
@@ -437,7 +437,7 @@ export const GalleryPreview = () => {
 };
 
 // 7. Sponsors Section
-export const Sponsors = () => {
+export const Sponsors = ({ list = sponsors }) => {
   return (
     <SectionWrapper bg="paper" id="sponsors-preview">
       <SectionTitle
@@ -446,7 +446,7 @@ export const Sponsors = () => {
         subtitle="We express our deep gratitude to these organizations backing our social and cultural agendas."
       />
       <Grid container spacing={3} sx={{ justifyContent: 'center', alignItems: 'center' }}>
-        {sponsors.map((sponsor) => (
+        {list.map((sponsor) => (
           <Grid item xs={6} sm={4} md={2} key={sponsor.id}>
             <SponsorCard sponsor={sponsor} />
           </Grid>
@@ -545,7 +545,8 @@ export const DonationCTA = () => {
 };
 
 // 10. Latest News Preview
-export const LatestNewsPreview = () => {
+// 8. Latest News Section
+export const LatestNewsPreview = ({ news = newsArticles }) => {
   return (
     <SectionWrapper bg="alternate" id="news-preview">
       <SectionTitle
@@ -554,13 +555,16 @@ export const LatestNewsPreview = () => {
         subtitle="Keep abreast of recent announcements, schedules, and press releases."
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {newsArticles.map((article) => (
+        {news.slice(0, 3).map((article) => {
+          const img = article.featured_image || article.image;
+          const date = article.publish_date || article.date;
+          return (
           <div key={article.id} className="flex">
             <Card sx={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
               <Box sx={{ overflow: 'hidden', height: 200, position: 'relative' }}>
                 <Box
                   component="img"
-                  src={article.image}
+                  src={img}
                   alt={article.title}
                   sx={{
                     width: '100%',
@@ -573,7 +577,7 @@ export const LatestNewsPreview = () => {
               </Box>
               <CardContent sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                 <Typography variant="caption" color="primary" sx={{ fontWeight: 700, mb: 1, display: 'block' }}>
-                  {article.category} | {new Date(article.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  {article.category} | {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </Typography>
                 <Typography variant="h4" sx={{ fontSize: '1.15rem', fontWeight: 700, mb: 1.5, lineHeight: 1.35, flexGrow: 1 }}>
                   {article.title}
@@ -590,7 +594,7 @@ export const LatestNewsPreview = () => {
                 </Typography>
                 <MuiLink
                   component={Link}
-                  to={`/news?id=${article.id}`}
+                  to={article.slug ? `/news/${article.slug}` : `/news?id=${article.id}`}
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
@@ -607,7 +611,7 @@ export const LatestNewsPreview = () => {
               </CardContent>
             </Card>
           </div>
-        ))}
+        );})}
       </div>
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
         <SecondaryButton to="/news">
@@ -619,7 +623,7 @@ export const LatestNewsPreview = () => {
 };
 
 // 11. Contact Preview
-export const ContactPreview = () => {
+export const ContactPreview = ({ settings = {} }) => {
   return (
     <SectionWrapper bg="paper" id="contact-preview">
       <SectionTitle
@@ -643,7 +647,7 @@ export const ContactPreview = () => {
               </Box>
               <Box>
                 <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Call Us</Typography>
-                <Typography variant="body2" color="text.secondary">+91 22 2456 7890</Typography>
+                <Typography variant="body2" color="text.secondary">{settings.contact_phone || "+91 22 2456 7890"}</Typography>
               </Box>
             </Box>
 
@@ -653,7 +657,7 @@ export const ContactPreview = () => {
               </Box>
               <Box>
                 <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Email Address</Typography>
-                <Typography variant="body2" color="text.secondary">support@vikrin.org</Typography>
+                <Typography variant="body2" color="text.secondary">{settings.contact_email || "support@vikrin.org"}</Typography>
               </Box>
             </Box>
 

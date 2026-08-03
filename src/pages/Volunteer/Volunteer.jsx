@@ -1,22 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Tabs, Tab, TextField, MenuItem, Typography, Paper, Grid, Divider, Button } from '@mui/material';
+import { Box, Tabs, Tab, TextField, MenuItem, Typography, Paper, Grid, Button } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
-import { Heart, UserCheck, CheckCircle, ShieldCheck } from 'lucide-react';
+import { Heart, UserCheck, ShieldCheck } from 'lucide-react';
 import SEO from '../../components/seo/SEO';
 import PageHeader from '../../components/common/PageHeader';
 import { SectionWrapper } from '../../components/sections/HomeSections';
 import { PrimaryButton } from '../../components/common/Buttons';
 import { volunteerRoles } from '../../constants/mockData';
+import api from '../../services/api';
+import { useConfig } from '../../context/ConfigContext';
 import toast from 'react-hot-toast';
 
 const Volunteer = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [tabValue, setTabValue] = useState(0);
   const [donationAmount, setDonationAmount] = useState('1000');
+  
+  const { trackVisit } = useConfig();
+  const [seo, setSeo] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   // Handle syncing URL query `?action=donate` to Tab
   useEffect(() => {
+    trackVisit();
+    
+    // Fetch SEO
+    const fetchSeo = async () => {
+      try {
+        const seoRes = await api.get('/settings.php', { params: { action: 'seo', page: 'volunteer' } });
+        if (seoRes.success && seoRes.data) {
+          setSeo(seoRes.data);
+        }
+      } catch (err) {
+        // silent fail
+      }
+    };
+    fetchSeo();
+
     const action = searchParams.get('action');
     if (action === 'donate') {
       setTabValue(1);
@@ -46,12 +67,24 @@ const Volunteer = () => {
     }
   });
 
-  const onVolunteerSubmit = (data) => {
-    toast.success(`Thank you, ${data.fullName}! Your volunteer registration was submitted. Our youth lead will call you.`, {
-      duration: 6000,
-      icon: '🙌',
-    });
-    reset();
+  const onVolunteerSubmit = async (data) => {
+    setSubmitting(true);
+    try {
+      const res = await api.post('/volunteers.php?action=register', {
+        name: data.fullName,
+        email: data.email,
+        mobile: data.phone,
+        address: `Prior Experience: ${data.experience}. Skills details: ${data.message}`,
+        skills: data.role
+      });
+      if (res.success) {
+        reset();
+      }
+    } catch (err) {
+      // Toast handles error automatically via axios interceptor
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   // Donation Form Submit
@@ -66,8 +99,12 @@ const Volunteer = () => {
   return (
     <Box>
       <SEO
-        title="Volunteer & Support Portal"
-        description="Become a community volunteer or donate securely to support cultural festivals, relief work, and educational camps."
+        title={seo?.meta_title || "Become a Volunteer"}
+        description={seo?.meta_description || "Become a community volunteer or donate securely to support cultural festivals, relief work, and educational camps."}
+        keywords={seo?.meta_keywords}
+        ogTitle={seo?.og_title}
+        ogDescription={seo?.og_description}
+        ogImage={seo?.og_image}
       />
       <PageHeader
         title="Support Our Cause"
@@ -218,8 +255,8 @@ const Volunteer = () => {
                     )}
                   />
 
-                  <PrimaryButton type="submit" size="large" sx={{ py: 1.5, mt: 1 }}>
-                    Register Application
+                  <PrimaryButton type="submit" size="large" sx={{ py: 1.5, mt: 1 }} disabled={submitting}>
+                    {submitting ? 'Submitting Application...' : 'Register Application'}
                   </PrimaryButton>
                 </Box>
               </Paper>
@@ -232,10 +269,10 @@ const Volunteer = () => {
                   <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                     <ShieldCheck size={20} className="text-orange-500" /> Volunteer Guidelines
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2, lineHeight: 1.6 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2, lineHeight: 1.65 }}>
                     All volunteers are provided with an official ID card and custom Vikrin Trust t-shirts for crowd control duties.
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.65 }}>
                     Certificate of Appreciation and performance recommendation letter is provided to students on completing at least 40 hours of calendar assistance.
                   </Typography>
                 </Paper>
