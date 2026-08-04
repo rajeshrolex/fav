@@ -117,7 +117,7 @@ const HeroBanner = () => {
     <Box
       sx={{
         width: '100%',
-        minHeight: '100vh',
+        height: '100vh',
         position: 'relative',
         overflow: 'hidden',
         bgcolor: '#0F172A',
