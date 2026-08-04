@@ -224,82 +224,214 @@ const HomeCMS = () => {
       {tabValue === 1 && (
         <Paper component="form" onSubmit={handleUpdateSettings} sx={{ p: 4, border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
           <Typography variant="h4" sx={{ fontWeight: 800, fontSize: '1.2rem', mb: 3 }}>
-            Welcome Section and President Board settings
+            Homepage Content & Identity Settings
           </Typography>
 
           <Grid container spacing={3}>
-            {/* Welcome banner settings */}
-            <Grid item xs={12}>
+            {/* 1. Welcome Section */}
+            <Grid xs={12}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1, color: 'primary.main' }}>1. Welcome Section Header</Typography>
+            </Grid>
+            <Grid xs={12} sm={4}>
               <TextField
-                label="Hero Welcome Title"
+                label="Welcome Badge Tag"
                 fullWidth
-                value={settings.hero_title || ''}
-                onChange={(e) => handleInputChange('hero_title', e.target.value)}
+                placeholder="WELCOME TO VIKRIN"
+                value={settings.welcome_tag || ''}
+                onChange={(e) => handleInputChange('welcome_tag', e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={8}>
               <TextField
-                label="Hero Button Text"
+                label="Welcome Headline Title"
                 fullWidth
-                value={settings.hero_btn_text || ''}
-                onChange={(e) => handleInputChange('hero_btn_text', e.target.value)}
+                placeholder="Connecting Local Communities, Digitally."
+                value={settings.welcome_title || ''}
+                onChange={(e) => handleInputChange('welcome_title', e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12}>
               <TextField
-                label="Hero Button Link"
+                label="Welcome Section Description"
+                multiline
+                rows={3}
                 fullWidth
-                value={settings.hero_btn_link || ''}
-                onChange={(e) => handleInputChange('hero_btn_link', e.target.value)}
+                placeholder="Vikrin is an enterprise-grade ecosystem..."
+                value={settings.welcome_description || ''}
+                onChange={(e) => handleInputChange('welcome_description', e.target.value)}
               />
             </Grid>
 
-            <Grid item xs={12}>
+            {/* 2. Homepage Statistics Counters */}
+            <Grid xs={12}>
               <Divider sx={{ my: 1 }} />
-              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>Home About Preview Details</Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1, color: 'primary.main' }}>2. Homepage Counter Statistics</Typography>
+            </Grid>
+            <Grid xs={12} sm={3}>
+              <TextField
+                label="Stat 1 Value"
+                fullWidth
+                placeholder="25+"
+                value={settings.stat_legacy_value || ''}
+                onChange={(e) => handleInputChange('stat_legacy_value', e.target.value)}
+              />
+            </Grid>
+            <Grid xs={12} sm={3}>
+              <TextField
+                label="Stat 1 Label"
+                fullWidth
+                placeholder="Years of Legacy"
+                value={settings.stat_legacy_label || ''}
+                onChange={(e) => handleInputChange('stat_legacy_label', e.target.value)}
+              />
+            </Grid>
+            <Grid xs={12} sm={3}>
+              <TextField
+                label="Stat 2 Value"
+                fullWidth
+                placeholder="150+"
+                value={settings.stat_committee_value || ''}
+                onChange={(e) => handleInputChange('stat_committee_value', e.target.value)}
+              />
+            </Grid>
+            <Grid xs={12} sm={3}>
+              <TextField
+                label="Stat 2 Label"
+                fullWidth
+                placeholder="Active Committee Members"
+                value={settings.stat_committee_label || ''}
+                onChange={(e) => handleInputChange('stat_committee_label', e.target.value)}
+              />
+            </Grid>
+            <Grid xs={12} sm={3}>
+              <TextField
+                label="Stat 3 Value"
+                fullWidth
+                placeholder="2,500+"
+                value={settings.stat_volunteers_value || ''}
+                onChange={(e) => handleInputChange('stat_volunteers_value', e.target.value)}
+              />
+            </Grid>
+            <Grid xs={12} sm={3}>
+              <TextField
+                label="Stat 3 Label"
+                fullWidth
+                placeholder="Registered Volunteers"
+                value={settings.stat_volunteers_label || ''}
+                onChange={(e) => handleInputChange('stat_volunteers_label', e.target.value)}
+              />
+            </Grid>
+            <Grid xs={12} sm={3}>
+              <TextField
+                label="Stat 4 Value"
+                fullWidth
+                placeholder="50K+"
+                value={settings.stat_attendees_value || ''}
+                onChange={(e) => handleInputChange('stat_attendees_value', e.target.value)}
+              />
+            </Grid>
+            <Grid xs={12} sm={3}>
+              <TextField
+                label="Stat 4 Label"
+                fullWidth
+                placeholder="Annual Attendees"
+                value={settings.stat_attendees_label || ''}
+                onChange={(e) => handleInputChange('stat_attendees_label', e.target.value)}
+              />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            {/* 3. About Identity Section */}
+            <Grid xs={12}>
+              <Divider sx={{ my: 1 }} />
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1, color: 'primary.main' }}>3. Our Identity & Pillars</Typography>
+            </Grid>
+
+            <Grid xs={12} sm={4}>
               <TextField
-                label="About Heading"
+                label="Identity Badge"
                 fullWidth
+                placeholder="Our Identity"
+                value={settings.about_preview_badge || ''}
+                onChange={(e) => handleInputChange('about_preview_badge', e.target.value)}
+              />
+            </Grid>
+            <Grid xs={12} sm={4}>
+              <TextField
+                label="Identity Title"
+                fullWidth
+                placeholder="Who We Are"
                 value={settings.about_preview_title || ''}
                 onChange={(e) => handleInputChange('about_preview_title', e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={4}>
               <TextField
-                label="About Subtitle"
+                label="Identity Subtitle"
                 fullWidth
+                placeholder="Bridging cultural heritage..."
                 value={settings.about_preview_subtitle || ''}
                 onChange={(e) => handleInputChange('about_preview_subtitle', e.target.value)}
               />
             </Grid>
-            <Grid item xs={12}>
+
+            <Grid xs={12}>
               <TextField
-                label="Paragraph 1 (Welcome Message)"
+                label="Identity Narrative Paragraph"
                 multiline
                 rows={3}
                 fullWidth
+                placeholder="For over two decades, the Vikrin Community Trust has been at the forefront..."
                 value={settings.about_preview_text1 || ''}
                 onChange={(e) => handleInputChange('about_preview_text1', e.target.value)}
               />
             </Grid>
-            <Grid item xs={12}>
+
+            <Grid xs={12} sm={6}>
               <TextField
-                label="Paragraph 2 (Welcome Message)"
-                multiline
-                rows={3}
+                label="Pillar 1 Title"
                 fullWidth
-                value={settings.about_preview_text2 || ''}
-                onChange={(e) => handleInputChange('about_preview_text2', e.target.value)}
+                placeholder="Empowering Youth & Legacy"
+                value={settings.about_preview_pillar1_title || ''}
+                onChange={(e) => handleInputChange('about_preview_pillar1_title', e.target.value)}
+              />
+            </Grid>
+            <Grid xs={12} sm={6}>
+              <TextField
+                label="Pillar 1 Description"
+                fullWidth
+                placeholder="Orchestrating cultural celebrations..."
+                value={settings.about_preview_pillar1_desc || ''}
+                onChange={(e) => handleInputChange('about_preview_pillar1_desc', e.target.value)}
+              />
+            </Grid>
+
+            <Grid xs={12} sm={6}>
+              <TextField
+                label="Pillar 2 Title"
+                fullWidth
+                placeholder="Digital Operations Hub"
+                value={settings.about_preview_pillar2_title || ''}
+                onChange={(e) => handleInputChange('about_preview_pillar2_title', e.target.value)}
+              />
+            </Grid>
+            <Grid xs={12} sm={6}>
+              <TextField
+                label="Pillar 2 Description"
+                fullWidth
+                placeholder="Providing local committees..."
+                value={settings.about_preview_pillar2_desc || ''}
+                onChange={(e) => handleInputChange('about_preview_pillar2_desc', e.target.value)}
               />
             </Grid>
 
             {/* Mission Vision Settings */}
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12}>
+              <Divider sx={{ my: 1 }} />
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1, color: 'primary.main' }}>4. Mission & Vision Statements</Typography>
+            </Grid>
+            <Grid xs={12} sm={6}>
               <TextField
-                label="Mission Statement Summary"
+                label="Mission Statement"
                 multiline
                 rows={3}
                 fullWidth
@@ -307,9 +439,9 @@ const HomeCMS = () => {
                 onChange={(e) => handleInputChange('about_preview_mission', e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
-                label="Vision Statement Summary"
+                label="Vision Statement"
                 multiline
                 rows={3}
                 fullWidth
@@ -318,7 +450,7 @@ const HomeCMS = () => {
               />
             </Grid>
 
-            <Grid item xs={12} sx={{ mt: 2 }}>
+            <Grid xs={12} sx={{ mt: 2 }}>
               <Button type="submit" variant="contained" startIcon={<Save size={16} />} disabled={submitting}>
                 {submitting ? 'Saving settings...' : 'Save Home CMS Settings'}
               </Button>

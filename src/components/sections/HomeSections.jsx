@@ -54,13 +54,13 @@ export const WelcomeSection = ({ stats = statistics, settings = {} }) => {
             transition={{ duration: 0.6 }}
           >
             <Typography variant="overline" color="primary" sx={{ fontWeight: 700, letterSpacing: 1.5 }}>
-              WELCOME TO VIKRIN
+              {settings.welcome_tag || "WELCOME TO VIKRIN"}
             </Typography>
             <Typography variant="h2" sx={{ fontWeight: 800, mt: 1, mb: 3 }}>
-              Connecting Local Communities, Digitally.
+              {settings.welcome_title || "Connecting Local Communities, Digitally."}
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{ mb: 4, lineHeight: 1.7 }}>
-              Vikrin is an enterprise-grade ecosystem tailored for youth circles, NGOs, Ganeshotsav committees, and public trusts. We bridge historical faith and cultural celebrations with state-of-the-art web systems—helping committees seamlessly coordinate programs, gather donations, catalog history, and mobilize volunteer support.
+              {settings.welcome_description || "Vikrin is an enterprise-grade ecosystem tailored for youth circles, NGOs, Ganeshotsav committees, and public trusts. We bridge historical faith and cultural celebrations with state-of-the-art web systems—helping committees seamlessly coordinate programs, gather donations, catalog history, and mobilize volunteer support."}
             </Typography>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ width: '100%' }}>
               <PrimaryButton to="/about" endIcon={<ArrowRight size={16} />}>
@@ -127,8 +127,8 @@ export const AboutPreview = ({ settings = {} }) => {
 
   const pillars = [
     {
-      title: 'Empowering Youth & Legacy',
-      description: 'Orchestrating cultural celebrations, welfare drives, free student clinics, and athletic leagues.',
+      title: settings.about_preview_pillar1_title || 'Empowering Youth & Legacy',
+      description: settings.about_preview_pillar1_desc || 'Orchestrating cultural celebrations, welfare drives, free student clinics, and athletic leagues.',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: theme.palette.primary.main }}>
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -137,8 +137,8 @@ export const AboutPreview = ({ settings = {} }) => {
       )
     },
     {
-      title: 'Digital Operations Hub',
-      description: 'Providing local committees a unified toolkit for volunteer rosters, donation tracking, and event registrations.',
+      title: settings.about_preview_pillar2_title || 'Digital Operations Hub',
+      description: settings.about_preview_pillar2_desc || 'Providing local committees a unified toolkit for volunteer rosters, donation tracking, and event registrations.',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: theme.palette.primary.main }}>
           <rect width="18" height="18" x="3" y="3" rx="2" />
@@ -153,9 +153,9 @@ export const AboutPreview = ({ settings = {} }) => {
   return (
     <SectionWrapper bg="alternate" id="about-preview">
       <SectionTitle
-        badge="Our Identity"
-        title="Who We Are"
-        subtitle="Bridging cultural heritage with modern tech infrastructure to empower local organizations."
+        badge={settings.about_preview_badge || "Our Identity"}
+        title={settings.about_preview_title || "Who We Are"}
+        subtitle={settings.about_preview_subtitle || "Bridging cultural heritage with modern tech infrastructure to empower local organizations."}
       />
       <div className="flex flex-col lg:flex-row gap-12 items-center">
         {/* Left Side: Narrative and features */}
