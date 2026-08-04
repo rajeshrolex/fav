@@ -11,16 +11,29 @@ export async function getCommittee(req, res) {
     query += ' ORDER BY display_order ASC, id DESC';
 
     const [rows] = await pool.query(query);
-    return res.json({ success: true, message: 'Committee members loaded successfully', data: rows });
+    const formatted = rows.map(m => ({
+      ...m,
+      role: m.position || m.role,
+      position: m.position || m.role,
+      image: m.photo_url || m.image || m.image_url,
+      photo_url: m.photo_url || m.image || m.image_url,
+      image_url: m.photo_url || m.image || m.image_url
+    }));
+
+    return res.json({ success: true, message: 'Committee members loaded successfully', data: formatted });
   } catch (err) {
     return res.status(500).json({ success: false, message: `Failed to fetch committee members: ${err.message}`, data: null });
   }
 }
 
 export async function addCommitteeMember(req, res) {
-  const { name, position, department, photo_url, mobile, email, bio, display_order, is_active } = req.body || {};
+  const { name, position, role, department, photo_url, image_url, image, mobile, email, bio, display_order, is_active } = req.body || {};
 
-  if (!name || !position) {
+  const finalName = (name || '').trim();
+  const finalPos = (position || role || '').trim();
+  const finalPhoto = (photo_url || image_url || image || '').trim();
+
+  if (!finalName || !finalPos) {
     return res.status(400).json({ success: false, message: 'Name and Position are required', data: null });
   }
 
@@ -30,10 +43,10 @@ export async function addCommitteeMember(req, res) {
        (name, position, department, photo_url, mobile, email, bio, display_order, is_active) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        name.trim(),
-        position.trim(),
+        finalName,
+        finalPos,
         department ? department.trim() : null,
-        photo_url ? photo_url.trim() : null,
+        finalPhoto || null,
         mobile ? mobile.trim() : null,
         email ? email.trim() : null,
         bio ? bio.trim() : null,
@@ -49,10 +62,14 @@ export async function addCommitteeMember(req, res) {
 }
 
 export async function editCommitteeMember(req, res) {
-  const { id, name, position, department, photo_url, mobile, email, bio, display_order, is_active } = req.body || {};
+  const { id, name, position, role, department, photo_url, image_url, image, mobile, email, bio, display_order, is_active } = req.body || {};
   const memberId = parseInt(id, 10);
 
-  if (!memberId || !name || !position) {
+  const finalName = (name || '').trim();
+  const finalPos = (position || role || '').trim();
+  const finalPhoto = (photo_url || image_url || image || '').trim();
+
+  if (!memberId || !finalName || !finalPos) {
     return res.status(400).json({ success: false, message: 'ID, Name and Position are required', data: null });
   }
 
@@ -62,10 +79,10 @@ export async function editCommitteeMember(req, res) {
        name = ?, position = ?, department = ?, photo_url = ?, mobile = ?, email = ?, bio = ?, display_order = ?, is_active = ? 
        WHERE id = ?`,
       [
-        name.trim(),
-        position.trim(),
+        finalName,
+        finalPos,
         department ? department.trim() : null,
-        photo_url ? photo_url.trim() : null,
+        finalPhoto || null,
         mobile ? mobile.trim() : null,
         email ? email.trim() : null,
         bio ? bio.trim() : null,

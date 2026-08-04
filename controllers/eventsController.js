@@ -14,7 +14,17 @@ export async function getEvents(req, res) {
       const event = events[0];
       const [gallery] = await pool.query('SELECT * FROM event_gallery WHERE event_id = ?', [id]);
       event.gallery = gallery;
-      return res.json({ success: true, message: 'Event details fetched', data: event });
+
+      const formatted = {
+        ...event,
+        date: event.event_date,
+        time: event.event_time,
+        location: event.venue,
+        image: event.cover_image,
+        image_url: event.cover_image
+      };
+
+      return res.json({ success: true, message: 'Event details fetched', data: formatted });
     }
 
     let query = 'SELECT * FROM events';
@@ -24,7 +34,16 @@ export async function getEvents(req, res) {
     query += ' ORDER BY event_date DESC, id DESC';
 
     const [events] = await pool.query(query);
-    return res.json({ success: true, message: 'Events list fetched successfully', data: events });
+    const formatted = events.map(e => ({
+      ...e,
+      date: e.event_date,
+      time: e.event_time,
+      location: e.venue,
+      image: e.cover_image,
+      image_url: e.cover_image
+    }));
+
+    return res.json({ success: true, message: 'Events list fetched successfully', data: formatted });
   } catch (err) {
     return res.status(500).json({ success: false, message: `Failed to fetch events: ${err.message}`, data: null });
   }
@@ -62,9 +81,14 @@ export async function registerForEvent(req, res) {
 }
 
 export async function addEvent(req, res) {
-  const { title, description, event_date, event_time, venue, cover_image, registration_link, status, is_featured, gallery } = req.body || {};
+  const { title, description, event_date, date, event_time, time, venue, location, cover_image, image, image_url, registration_link, status, is_featured, gallery } = req.body || {};
 
-  if (!title || !description || !event_date || !event_time || !venue) {
+  const finalDate = (event_date || date || '').trim();
+  const finalTime = (event_time || time || '').trim();
+  const finalVenue = (venue || location || '').trim();
+  const finalImage = (cover_image || image || image_url || '').trim();
+
+  if (!title || !description || !finalDate || !finalTime || !finalVenue) {
     return res.status(400).json({ success: false, message: 'Title, description, date, time, and venue are required', data: null });
   }
 
@@ -76,10 +100,10 @@ export async function addEvent(req, res) {
       [
         title.trim(),
         description.trim(),
-        event_date.trim(),
-        event_time.trim(),
-        venue.trim(),
-        cover_image ? cover_image.trim() : null,
+        finalDate,
+        finalTime,
+        finalVenue,
+        finalImage || null,
         registration_link ? registration_link.trim() : null,
         status ? status.trim() : 'Upcoming',
         is_featured ? 1 : 0
@@ -102,10 +126,15 @@ export async function addEvent(req, res) {
 }
 
 export async function editEvent(req, res) {
-  const { id, title, description, event_date, event_time, venue, cover_image, registration_link, status, is_featured, gallery } = req.body || {};
+  const { id, title, description, event_date, date, event_time, time, venue, location, cover_image, image, image_url, registration_link, status, is_featured, gallery } = req.body || {};
   const eventId = parseInt(id, 10);
 
-  if (!eventId || !title || !description || !event_date || !event_time || !venue) {
+  const finalDate = (event_date || date || '').trim();
+  const finalTime = (event_time || time || '').trim();
+  const finalVenue = (venue || location || '').trim();
+  const finalImage = (cover_image || image || image_url || '').trim();
+
+  if (!eventId || !title || !description || !finalDate || !finalTime || !finalVenue) {
     return res.status(400).json({ success: false, message: 'ID, Title, description, date, time, and venue are required', data: null });
   }
 
@@ -121,10 +150,10 @@ export async function editEvent(req, res) {
       [
         title.trim(),
         description.trim(),
-        event_date.trim(),
-        event_time.trim(),
-        venue.trim(),
-        cover_image ? cover_image.trim() : null,
+        finalDate,
+        finalTime,
+        finalVenue,
+        finalImage || null,
         registration_link ? registration_link.trim() : null,
         status ? status.trim() : 'Upcoming',
         is_featured ? 1 : 0,

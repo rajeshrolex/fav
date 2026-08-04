@@ -24,16 +24,25 @@ export async function getGallery(req, res) {
     query += ' ORDER BY created_at DESC, id DESC';
 
     const [rows] = await pool.query(query, params);
-    return res.json({ success: true, message: 'Gallery media loaded successfully', data: rows });
+    const formatted = rows.map(g => ({
+      ...g,
+      image: g.media_url || g.image || g.image_url,
+      image_url: g.media_url || g.image || g.image_url,
+      media_url: g.media_url || g.image || g.image_url
+    }));
+
+    return res.json({ success: true, message: 'Gallery media loaded successfully', data: formatted });
   } catch (err) {
     return res.status(500).json({ success: false, message: `Failed to fetch gallery: ${err.message}`, data: null });
   }
 }
 
 export async function addGalleryItem(req, res) {
-  const { title, category, album_name, media_type, media_url, thumbnail_url } = req.body || {};
+  const { title, category, album_name, media_type, media_url, image_url, image, thumbnail_url } = req.body || {};
 
-  if (!media_url) {
+  const finalUrl = (media_url || image_url || image || '').trim();
+
+  if (!finalUrl) {
     return res.status(400).json({ success: false, message: 'Media URL is required', data: null });
   }
 
@@ -46,7 +55,7 @@ export async function addGalleryItem(req, res) {
         category ? category.trim() : 'General',
         album_name ? album_name.trim() : 'General',
         media_type ? media_type.trim() : 'image',
-        media_url.trim(),
+        finalUrl,
         thumbnail_url ? thumbnail_url.trim() : null
       ]
     );

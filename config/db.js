@@ -253,7 +253,7 @@ export async function initDb() {
       ];
       for (const item of eventsData) {
         await pool.query(
-          `INSERT INTO events (title, event_date, event_time, location, category, description, image_url, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO events (title, event_date, event_time, venue, category, description, cover_image, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
           item
         );
       }
@@ -270,7 +270,7 @@ export async function initDb() {
       ];
       for (const item of membersData) {
         await pool.query(
-          `INSERT INTO committee_members (name, role, department, image_url, bio, email) VALUES (?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO committee_members (name, position, department, photo_url, bio, email) VALUES (?, ?, ?, ?, ?, ?)`,
           item
         );
       }
@@ -289,7 +289,7 @@ export async function initDb() {
       ];
       for (const item of galleryData) {
         await pool.query(
-          `INSERT INTO gallery (title, category, image_url) VALUES (?, ?, ?)`,
+          `INSERT INTO gallery (title, category, media_url) VALUES (?, ?, ?)`,
           item
         );
       }
@@ -308,7 +308,7 @@ export async function initDb() {
       ];
       for (const item of sponsorData) {
         await pool.query(
-          `INSERT INTO sponsors (name, tier, logo_url, website_url) VALUES (?, ?, ?, ?)`,
+          `INSERT INTO sponsors (name, category, logo_url, website) VALUES (?, ?, ?, ?)`,
           item
         );
       }

@@ -17,6 +17,7 @@ const Volunteer = lazy(() => import('../pages/Volunteer/Volunteer'));
 const Contact = lazy(() => import('../pages/Contact/Contact'));
 const News = lazy(() => import('../pages/News/News'));
 const DynamicPage = lazy(() => import('../pages/DynamicPage/DynamicPage'));
+const LayoutDemo = lazy(() => import('../pages/LayoutDemo/LayoutDemo'));
 const NotFound = lazy(() => import('../pages/NotFound/NotFound'));
 
 // Admin Pages
@@ -50,6 +51,7 @@ export default function Router() {
         { path: 'volunteer', element: <Volunteer /> },
         { path: 'contact', element: <Contact /> },
         { path: 'news', element: <News /> },
+        { path: 'layout-demo', element: <LayoutDemo /> },
         { path: 'pages/:slug', element: <DynamicPage /> },
         { path: '404', element: <NotFound /> },
         { path: '*', element: <Navigate to="/404" replace /> }

@@ -11,16 +11,31 @@ export async function getSponsors(req, res) {
     query += ' ORDER BY priority ASC, id DESC';
 
     const [rows] = await pool.query(query);
-    return res.json({ success: true, message: 'Sponsors loaded successfully', data: rows });
+    const formatted = rows.map(s => ({
+      ...s,
+      tier: s.category || s.tier,
+      category: s.category || s.tier,
+      logo: s.logo_url || s.logo,
+      logo_url: s.logo_url || s.logo,
+      website: s.website || s.website_url,
+      website_url: s.website || s.website_url
+    }));
+
+    return res.json({ success: true, message: 'Sponsors loaded successfully', data: formatted });
   } catch (err) {
     return res.status(500).json({ success: false, message: `Failed to fetch sponsors: ${err.message}`, data: null });
   }
 }
 
 export async function addSponsor(req, res) {
-  const { name, logo_url, website, category, priority, is_active } = req.body || {};
+  const { name, logo_url, logo, website, website_url, category, tier, priority, is_active } = req.body || {};
 
-  if (!name || !logo_url) {
+  const finalName = (name || '').trim();
+  const finalLogo = (logo_url || logo || '').trim();
+  const finalWeb = (website || website_url || '').trim();
+  const finalCat = (category || tier || 'Bronze').trim();
+
+  if (!finalName || !finalLogo) {
     return res.status(400).json({ success: false, message: 'Sponsor name and logo URL are required', data: null });
   }
 
@@ -29,10 +44,10 @@ export async function addSponsor(req, res) {
       `INSERT INTO sponsors (name, logo_url, website, category, priority, is_active) 
        VALUES (?, ?, ?, ?, ?, ?)`,
       [
-        name.trim(),
-        logo_url.trim(),
-        website ? website.trim() : null,
-        category ? category.trim() : 'Bronze',
+        finalName,
+        finalLogo,
+        finalWeb || null,
+        finalCat,
         parseInt(priority || '0', 10),
         is_active !== undefined ? (is_active ? 1 : 0) : 1
       ]
@@ -45,10 +60,15 @@ export async function addSponsor(req, res) {
 }
 
 export async function editSponsor(req, res) {
-  const { id, name, logo_url, website, category, priority, is_active } = req.body || {};
+  const { id, name, logo_url, logo, website, website_url, category, tier, priority, is_active } = req.body || {};
   const sponsorId = parseInt(id, 10);
 
-  if (!sponsorId || !name || !logo_url) {
+  const finalName = (name || '').trim();
+  const finalLogo = (logo_url || logo || '').trim();
+  const finalWeb = (website || website_url || '').trim();
+  const finalCat = (category || tier || 'Bronze').trim();
+
+  if (!sponsorId || !finalName || !finalLogo) {
     return res.status(400).json({ success: false, message: 'ID, Sponsor name and logo URL are required', data: null });
   }
 
@@ -58,10 +78,10 @@ export async function editSponsor(req, res) {
        name = ?, logo_url = ?, website = ?, category = ?, priority = ?, is_active = ? 
        WHERE id = ?`,
       [
-        name.trim(),
-        logo_url.trim(),
-        website ? website.trim() : null,
-        category ? category.trim() : 'Bronze',
+        finalName,
+        finalLogo,
+        finalWeb || null,
+        finalCat,
         parseInt(priority || '0', 10),
         is_active ? 1 : 0,
         sponsorId

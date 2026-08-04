@@ -3,16 +3,33 @@ import pool from '../config/db.js';
 export async function getHeroSlides(req, res) {
   try {
     const [slides] = await pool.query('SELECT * FROM hero_slides ORDER BY display_order ASC, id ASC');
-    return res.json({ success: true, message: 'Hero slides fetched successfully', data: slides });
+    const formatted = slides.map(s => ({
+      ...s,
+      title: s.heading || s.title,
+      heading: s.heading || s.title,
+      image: s.image_url || s.image,
+      image_url: s.image_url || s.image,
+      button_text: s.primary_btn_text || s.button_text,
+      primary_btn_text: s.primary_btn_text || s.button_text,
+      button_link: s.primary_btn_link || s.button_link,
+      primary_btn_link: s.primary_btn_link || s.button_link
+    }));
+
+    return res.json({ success: true, message: 'Hero slides fetched successfully', data: formatted });
   } catch (err) {
     return res.status(500).json({ success: false, message: `Failed to fetch hero slides: ${err.message}`, data: null });
   }
 }
 
 export async function addHeroSlide(req, res) {
-  const { image_url, badge, heading, description, primary_btn_text, primary_btn_link, secondary_btn_text, secondary_btn_link, display_order } = req.body || {};
+  const { image_url, image, badge, heading, title, description, primary_btn_text, button_text, primary_btn_link, button_link, secondary_btn_text, secondary_btn_link, display_order } = req.body || {};
 
-  if (!image_url || !heading) {
+  const finalHeading = (heading || title || '').trim();
+  const finalImage = (image_url || image || '').trim();
+  const finalBtnText = (primary_btn_text || button_text || '').trim();
+  const finalBtnLink = (primary_btn_link || button_link || '').trim();
+
+  if (!finalImage || !finalHeading) {
     return res.status(400).json({ success: false, message: 'Image URL and heading are required', data: null });
   }
 
@@ -22,12 +39,12 @@ export async function addHeroSlide(req, res) {
        (image_url, badge, heading, description, primary_btn_text, primary_btn_link, secondary_btn_text, secondary_btn_link, display_order) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        image_url.trim(),
+        finalImage,
         badge ? badge.trim() : null,
-        heading.trim(),
+        finalHeading,
         description ? description.trim() : null,
-        primary_btn_text ? primary_btn_text.trim() : null,
-        primary_btn_link ? primary_btn_link.trim() : null,
+        finalBtnText || null,
+        finalBtnLink || null,
         secondary_btn_text ? secondary_btn_text.trim() : null,
         secondary_btn_link ? secondary_btn_link.trim() : null,
         parseInt(display_order || '0', 10)
@@ -41,10 +58,15 @@ export async function addHeroSlide(req, res) {
 }
 
 export async function editHeroSlide(req, res) {
-  const { id, image_url, badge, heading, description, primary_btn_text, primary_btn_link, secondary_btn_text, secondary_btn_link, display_order } = req.body || {};
+  const { id, image_url, image, badge, heading, title, description, primary_btn_text, button_text, primary_btn_link, button_link, secondary_btn_text, secondary_btn_link, display_order } = req.body || {};
   const slideId = parseInt(id, 10);
 
-  if (!slideId || !image_url || !heading) {
+  const finalHeading = (heading || title || '').trim();
+  const finalImage = (image_url || image || '').trim();
+  const finalBtnText = (primary_btn_text || button_text || '').trim();
+  const finalBtnLink = (primary_btn_link || button_link || '').trim();
+
+  if (!slideId || !finalImage || !finalHeading) {
     return res.status(400).json({ success: false, message: 'Slide ID, Image URL, and heading are required', data: null });
   }
 
@@ -56,12 +78,12 @@ export async function editHeroSlide(req, res) {
        secondary_btn_text = ?, secondary_btn_link = ?, 
        display_order = ? WHERE id = ?`,
       [
-        image_url.trim(),
+        finalImage,
         badge ? badge.trim() : null,
-        heading.trim(),
+        finalHeading,
         description ? description.trim() : null,
-        primary_btn_text ? primary_btn_text.trim() : null,
-        primary_btn_link ? primary_btn_link.trim() : null,
+        finalBtnText || null,
+        finalBtnLink || null,
         secondary_btn_text ? secondary_btn_text.trim() : null,
         secondary_btn_link ? secondary_btn_link.trim() : null,
         parseInt(display_order || '0', 10),

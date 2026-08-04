@@ -4,13 +4,22 @@ export async function getNews(req, res) {
   const slug = req.params.slug || req.query.slug;
   const id = req.query.id;
 
+  const formatArticle = (n) => ({
+    ...n,
+    image: n.featured_image || n.image || n.image_url,
+    image_url: n.featured_image || n.image || n.image_url,
+    featured_image: n.featured_image || n.image || n.image_url,
+    date: n.publish_date || n.date,
+    publish_date: n.publish_date || n.date
+  });
+
   try {
     if (slug) {
       const [rows] = await pool.query('SELECT * FROM news WHERE slug = ?', [slug]);
       if (rows.length === 0) {
         return res.status(404).json({ success: false, message: 'Article not found', data: null });
       }
-      return res.json({ success: true, message: 'Article details loaded', data: rows[0] });
+      return res.json({ success: true, message: 'Article details loaded', data: formatArticle(rows[0]) });
     }
 
     if (id) {
@@ -18,20 +27,23 @@ export async function getNews(req, res) {
       if (rows.length === 0) {
         return res.status(404).json({ success: false, message: 'Article not found', data: null });
       }
-      return res.json({ success: true, message: 'Article details loaded', data: rows[0] });
+      return res.json({ success: true, message: 'Article details loaded', data: formatArticle(rows[0]) });
     }
 
     const [rows] = await pool.query('SELECT * FROM news ORDER BY publish_date DESC, id DESC');
-    return res.json({ success: true, message: 'News articles loaded successfully', data: rows });
+    return res.json({ success: true, message: 'News articles loaded successfully', data: rows.map(formatArticle) });
   } catch (err) {
     return res.status(500).json({ success: false, message: `Failed to fetch news: ${err.message}`, data: null });
   }
 }
 
 export async function createNews(req, res) {
-  const { title, slug, category, author, summary, content, featured_image, publish_date, meta_title, meta_description } = req.body || {};
+  const { title, slug, category, author, summary, content, featured_image, image, image_url, publish_date, date, meta_title, meta_description } = req.body || {};
 
-  if (!title || !content || !publish_date) {
+  const finalDate = (publish_date || date || '').trim();
+  const finalImg = (featured_image || image || image_url || '').trim();
+
+  if (!title || !content || !finalDate) {
     return res.status(400).json({ success: false, message: 'Title, Content, and Publish Date are required', data: null });
   }
 
@@ -49,8 +61,8 @@ export async function createNews(req, res) {
         author ? author.trim() : null,
         summary ? summary.trim() : null,
         content.trim(),
-        featured_image ? featured_image.trim() : null,
-        publish_date.trim(),
+        finalImg || null,
+        finalDate,
         meta_title ? meta_title.trim() : null,
         meta_description ? meta_description.trim() : null
       ]
@@ -63,10 +75,13 @@ export async function createNews(req, res) {
 }
 
 export async function editNews(req, res) {
-  const { id, title, slug, category, author, summary, content, featured_image, publish_date, meta_title, meta_description } = req.body || {};
+  const { id, title, slug, category, author, summary, content, featured_image, image, image_url, publish_date, date, meta_title, meta_description } = req.body || {};
   const newsId = parseInt(id, 10);
 
-  if (!newsId || !title || !content || !publish_date) {
+  const finalDate = (publish_date || date || '').trim();
+  const finalImg = (featured_image || image || image_url || '').trim();
+
+  if (!newsId || !title || !content || !finalDate) {
     return res.status(400).json({ success: false, message: 'ID, Title, Content, and Publish Date are required', data: null });
   }
 
@@ -85,8 +100,8 @@ export async function editNews(req, res) {
         author ? author.trim() : null,
         summary ? summary.trim() : null,
         content.trim(),
-        featured_image ? featured_image.trim() : null,
-        publish_date.trim(),
+        finalImg || null,
+        finalDate,
         meta_title ? meta_title.trim() : null,
         meta_description ? meta_description.trim() : null,
         newsId
