@@ -62,7 +62,7 @@ export const WelcomeSection = ({ stats = statistics, settings = {} }) => {
             <Typography variant="body1" color="text.secondary" sx={{ mb: 4, lineHeight: 1.7 }}>
               Vikrin is an enterprise-grade ecosystem tailored for youth circles, NGOs, Ganeshotsav committees, and public trusts. We bridge historical faith and cultural celebrations with state-of-the-art web systems—helping committees seamlessly coordinate programs, gather donations, catalog history, and mobilize volunteer support.
             </Typography>
-            <Stack direction="row" spacing={2}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ width: '100%' }}>
               <PrimaryButton to="/about" endIcon={<ArrowRight size={16} />}>
                 Read Our Story
               </PrimaryButton>

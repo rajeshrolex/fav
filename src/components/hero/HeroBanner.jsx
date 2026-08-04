@@ -249,8 +249,8 @@ const HeroBanner = () => {
                       sx={{
                         width: '100%',
                         maxWidth: 720,
-                        p: { xs: 4, sm: 5, md: 6 },
-                        borderRadius: { xs: 4, md: 5 },
+                        p: { xs: 2.5, sm: 5, md: 6 },
+                        borderRadius: { xs: 3, md: 5 },
                         border: '1px solid rgba(255, 255, 255, 0.16)',
                         background: 'rgba(7, 12, 28, 0.72)',
                         backdropFilter: 'blur(22px)',
@@ -258,7 +258,7 @@ const HeroBanner = () => {
                         boxShadow: '0 30px 80px rgba(0, 0, 0, 0.32)',
                         color: '#FFFFFF',
                         mx: { xs: 0, md: 0 },
-                        my: { xs: 4, md: 0 },
+                        my: { xs: 2, md: 0 },
                       }}
                     >
                       <motion.div
@@ -297,8 +297,8 @@ const HeroBanner = () => {
                           sx={{
                             fontWeight: 800,
                             fontSize: {
-                              xs: 'clamp(2.2rem, 7vw, 2.75rem)',
-                              sm: 'clamp(2.75rem, 5vw, 3.5rem)',
+                              xs: 'clamp(1.5rem, 5.5vw, 2.2rem)',
+                              sm: 'clamp(2.5rem, 5vw, 3.5rem)',
                               md: 'clamp(3.2rem, 3vw, 4.25rem)',
                             },
                             lineHeight: 1.1,
