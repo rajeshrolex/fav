@@ -26,6 +26,7 @@ const AdminDashboard = lazy(() => import('../pages/Admin/Dashboard'));
 const AdminHomeCMS = lazy(() => import('../pages/Admin/HomeCMS'));
 const AdminAboutCMS = lazy(() => import('../pages/Admin/AboutCMS'));
 const AdminCommittee = lazy(() => import('../pages/Admin/CommitteeAdmin'));
+const AdminFestivalHistory = lazy(() => import('../pages/Admin/FestivalHistoryAdmin'));
 const AdminEvents = lazy(() => import('../pages/Admin/EventsAdmin'));
 const AdminGallery = lazy(() => import('../pages/Admin/GalleryAdmin'));
 const AdminSponsors = lazy(() => import('../pages/Admin/SponsorsAdmin'));
@@ -69,6 +70,7 @@ export default function Router() {
         { path: 'home', element: <AdminHomeCMS /> },
         { path: 'about', element: <AdminAboutCMS /> },
         { path: 'committee', element: <AdminCommittee /> },
+        { path: 'festival-history', element: <AdminFestivalHistory /> },
         { path: 'events', element: <AdminEvents /> },
         { path: 'gallery', element: <AdminGallery /> },
         { path: 'sponsors', element: <AdminSponsors /> },

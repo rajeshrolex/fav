@@ -16,6 +16,7 @@ import dashboardRoutes from './routes/dashboardRoutes.js';
 import aboutRoutes from './routes/aboutRoutes.js';
 import homeRoutes from './routes/homeRoutes.js';
 import mediaRoutes from './routes/mediaRoutes.js';
+import historyRoutes from './routes/historyRoutes.js';
 
 dotenv.config();
 
@@ -58,7 +59,9 @@ const routePairs = [
   ['/api/home', homeRoutes],
   ['/api/home.php', homeRoutes],
   ['/api/media', mediaRoutes],
-  ['/api/media.php', mediaRoutes]
+  ['/api/media.php', mediaRoutes],
+  ['/api/history', historyRoutes],
+  ['/api/history.php', historyRoutes]
 ];
 
 for (const [routePath, routerHandler] of routePairs) {
