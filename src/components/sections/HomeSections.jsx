@@ -46,7 +46,7 @@ export const WelcomeSection = ({ stats = statistics, settings = {} }) => {
   return (
     <SectionWrapper bg="paper" id="welcome">
       <Grid container spacing={5} sx={{ alignItems: 'center' }}>
-        <Grid item xs={12} md={6}>
+        <Grid xs={12} md={6}>
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -73,10 +73,10 @@ export const WelcomeSection = ({ stats = statistics, settings = {} }) => {
           </motion.div>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid xs={12} md={6}>
           <Grid container spacing={3}>
             {stats.map((stat, index) => (
-              <Grid item xs={6} key={index}>
+              <Grid xs={6} key={index}>
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -390,7 +390,7 @@ export const CommitteePreview = ({ members = committeeMembers }) => {
       />
       <Grid container spacing={4}>
         {members.slice(0, 4).map((member) => (
-          <Grid item xs={12} sm={6} md={3} key={member.id}>
+          <Grid xs={12} sm={6} md={3} key={member.id}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -447,7 +447,7 @@ export const Sponsors = ({ list = sponsors }) => {
       />
       <Grid container spacing={3} sx={{ justifyContent: 'center', alignItems: 'center' }}>
         {list.map((sponsor) => (
-          <Grid item xs={6} sm={4} md={2} key={sponsor.id}>
+          <Grid xs={6} sm={4} md={2} key={sponsor.id}>
             <SponsorCard sponsor={sponsor} />
           </Grid>
         ))}
@@ -513,7 +513,7 @@ export const DonationCTA = () => {
         }}
       >
         <Grid container spacing={4} sx={{ alignItems: 'center' }}>
-          <Grid item xs={12} md={8}>
+          <Grid xs={12} md={8}>
             <Typography variant="overline" color="primary" sx={{ fontWeight: 700, letterSpacing: 1.5 }}>
               SUPPORT OUR WORK
             </Typography>
@@ -524,7 +524,7 @@ export const DonationCTA = () => {
               All donations received by Vikrin Community Welfare Trust go directly into funding public infrastructure, community feasts (Bhandara), free healthcare campaigns, and education aids. We maintain audited accounts that are visible on the admin dashboard for full transparency.
             </Typography>
           </Grid>
-          <Grid item xs={12} md={4} sx={{ textAlign: { xs: 'left', md: 'right' } }}>
+          <Grid xs={12} md={4} sx={{ textAlign: { xs: 'left', md: 'right' } }}>
             <PrimaryButton 
               to="/volunteer?action=donate" 
               size="large"
@@ -632,7 +632,7 @@ export const ContactPreview = ({ settings = {} }) => {
         subtitle="Have queries regarding registrations, donation audits, or sponsorship tiers? Drop us a line."
       />
       <Grid container spacing={5} sx={{ alignItems: 'center' }}>
-        <Grid item xs={12} md={5}>
+        <Grid xs={12} md={5}>
           <Typography variant="h3" sx={{ fontWeight: 700, mb: 2, fontSize: '1.5rem' }}>
             We'd love to hear from you
           </Typography>
@@ -673,7 +673,7 @@ export const ContactPreview = ({ settings = {} }) => {
           </Box>
         </Grid>
 
-        <Grid item xs={12} md={7}>
+        <Grid xs={12} md={7}>
           <Paper
             sx={{
               p: 4,
@@ -695,19 +695,19 @@ export const ContactPreview = ({ settings = {} }) => {
             </Typography>
 
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid xs={12} sm={6}>
                 <TextField label="Full Name" fullWidth />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid xs={12} sm={6}>
                 <TextField label="Email Address" fullWidth />
               </Grid>
-              <Grid item xs={12}>
+              <Grid xs={12}>
                 <TextField label="Subject" fullWidth />
               </Grid>
-              <Grid item xs={12}>
+              <Grid xs={12}>
                 <TextField label="Message" multiline rows={4} fullWidth />
               </Grid>
-              <Grid item xs={12}>
+              <Grid xs={12}>
                 <PrimaryButton to="/contact" fullWidth>
                   Go to Contact Page Form
                 </PrimaryButton>

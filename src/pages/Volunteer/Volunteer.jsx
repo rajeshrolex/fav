@@ -310,7 +310,7 @@ const Volunteer = () => {
                     <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 700 }}>Select Amount (INR)</Typography>
                     <Grid container spacing={2}>
                       {['500', '1000', '2500', '5000', '10000'].map((amt) => (
-                        <Grid item xs={4} sm={2.4} key={amt}>
+                        <Grid item xs={4} sm={2} key={amt}>
                           <Button
                             fullWidth
                             variant={donationAmount === amt ? 'contained' : 'outlined'}

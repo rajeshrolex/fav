@@ -134,7 +134,7 @@ const Sponsors = () => {
           <SectionTitle badge="Growth Partners" title="Silver Sponsors" align="center" />
           <Grid container spacing={3} justifyContent="center">
             {silverSponsors.map(sponsor => (
-              <Grid item xs={6} sm={4} md={2.5} key={sponsor.id}>
+              <Grid item xs={6} sm={4} md={3} key={sponsor.id}>
                 <SponsorCard sponsor={sponsor} />
               </Grid>
             ))}

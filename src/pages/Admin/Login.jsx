@@ -135,12 +135,14 @@ const Login = () => {
                     fullWidth
                     error={!!errors.username}
                     helperText={errors.username?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <Box sx={{ color: 'text.secondary', mr: 1, display: 'flex', alignItems: 'center' }}>
-                          <User size={18} />
-                        </Box>
-                      ),
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <Box sx={{ color: 'text.secondary', mr: 1, display: 'flex', alignItems: 'center' }}>
+                            <User size={18} />
+                          </Box>
+                        ),
+                      }
                     }}
                   />
                 )}
@@ -158,12 +160,14 @@ const Login = () => {
                     fullWidth
                     error={!!errors.password}
                     helperText={errors.password?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <Box sx={{ color: 'text.secondary', mr: 1, display: 'flex', alignItems: 'center' }}>
-                          <KeyRound size={18} />
-                        </Box>
-                      ),
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <Box sx={{ color: 'text.secondary', mr: 1, display: 'flex', alignItems: 'center' }}>
+                            <KeyRound size={18} />
+                          </Box>
+                        ),
+                      }
                     }}
                   />
                 )}

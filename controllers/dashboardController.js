@@ -15,8 +15,8 @@ export async function getDashboardStats(req, res) {
     );
 
     const [[eventsCount]] = await pool.query('SELECT COUNT(*) as count FROM events');
-    const [[volunteersCount]] = await pool.query('SELECT COUNT(*) as count FROM volunteers WHERE status = "Pending"');
-    const [[messagesCount]] = await pool.query('SELECT COUNT(*) as count FROM contact_messages WHERE reply_status = "Unread"');
+    const [[volunteersCount]] = await pool.query("SELECT COUNT(*) as count FROM volunteers WHERE status = 'Pending'");
+    const [[messagesCount]] = await pool.query("SELECT COUNT(*) as count FROM contact_messages WHERE reply_status = 'Unread'");
     const [[newsCount]] = await pool.query('SELECT COUNT(*) as count FROM news');
     const [[sponsorsCount]] = await pool.query('SELECT COUNT(*) as count FROM sponsors');
     const [[committeeCount]] = await pool.query('SELECT COUNT(*) as count FROM committee_members');
@@ -46,5 +46,16 @@ export async function getDashboardStats(req, res) {
     });
   } catch (err) {
     return res.status(500).json({ success: false, message: `Failed to fetch dashboard stats: ${err.message}`, data: null });
+  }
+}
+
+export async function recordHit(req, res) {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    await pool.query('INSERT OR IGNORE INTO visitor_stats (visit_date, hits) VALUES (?, 0)', [today]);
+    await pool.query('UPDATE visitor_stats SET hits = hits + 1 WHERE visit_date = ?', [today]);
+    return res.json({ success: true, message: 'Hit recorded', data: null });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message, data: null });
   }
 }

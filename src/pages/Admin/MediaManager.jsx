@@ -153,7 +153,7 @@ const MediaManager = () => {
         <Grid container spacing={3.5}>
           {/* Folders grid */}
           {folders.map((f, idx) => (
-            <Grid item xs={6} sm={4} md={2.5} key={`folder-${idx}`}>
+            <Grid item xs={6} sm={4} md={3} key={`folder-${idx}`}>
               <Paper 
                 onClick={() => setCurrentFolder(currentFolder ? `${currentFolder}/${f}` : f)}
                 sx={{ 

@@ -75,7 +75,7 @@ const Dashboard = () => {
       {/* Grid of Stats Cards */}
       <Grid container spacing={3.5} sx={{ mb: 5 }}>
         {statCards.map((card, idx) => (
-          <Grid item xs={12} sm={6} md={3} key={idx}>
+          <Grid xs={12} sm={6} md={3} key={idx}>
             <Card sx={{ border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
               <CardContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 3 }}>
                 <Box>
@@ -97,7 +97,7 @@ const Dashboard = () => {
 
       <Grid container spacing={4}>
         {/* Column 1: Latest Volunteer Applications */}
-        <Grid item xs={12} md={6}>
+        <Grid xs={12} md={6}>
           <Paper sx={{ p: 3, height: '100%', border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3.5 }}>
               <Typography variant="h4" sx={{ fontWeight: 800, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -143,7 +143,7 @@ const Dashboard = () => {
         </Grid>
 
         {/* Column 2: Latest Messages Inbox */}
-        <Grid item xs={12} md={6}>
+        <Grid xs={12} md={6}>
           <Paper sx={{ p: 3, height: '100%', border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3.5 }}>
               <Typography variant="h4" sx={{ fontWeight: 800, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: 1 }}>

@@ -10,7 +10,8 @@ export async function getAboutDetails(req, res) {
       'about_preview_president_msg', 'about_preview_secretary_msg', 'about_history_full'
     ];
 
-    const [rows] = await pool.query('SELECT * FROM settings WHERE key_name IN (?)', [keys]);
+    const placeholders = keys.map(() => '?').join(', ');
+    const [rows] = await pool.query(`SELECT * FROM settings WHERE key_name IN (${placeholders})`, keys);
     
     const details = {};
     for (const k of keys) {

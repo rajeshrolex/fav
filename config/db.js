@@ -54,7 +54,24 @@ function adaptSql(sql) {
  * Handles both SELECT (returns array of objects) and mutating queries (returns OkPacket-like).
  */
 function executeQuery(sql, params = []) {
-  const adaptedSql = adaptSql(sql.trim());
+  let flatParams = [];
+  let rawSql = sql.trim();
+
+  if (Array.isArray(params)) {
+    for (const p of params) {
+      if (Array.isArray(p)) {
+        const placeholders = p.map(() => '?').join(', ');
+        rawSql = rawSql.replace(/\bIN\s*\(\s*\?\s*\)/gi, `IN (${placeholders})`);
+        flatParams.push(...p);
+      } else {
+        flatParams.push(p);
+      }
+    }
+  } else {
+    flatParams = params;
+  }
+
+  const adaptedSql = adaptSql(rawSql);
   
   if (!adaptedSql.trim()) {
     return [[], []];
@@ -65,11 +82,11 @@ function executeQuery(sql, params = []) {
   try {
     if (upperSql.startsWith('SELECT') || upperSql.startsWith('PRAGMA') || upperSql.startsWith('SHOW')) {
       const stmt = db.prepare(adaptedSql);
-      const rows = stmt.all(...params);
+      const rows = stmt.all(...flatParams);
       return [rows, []];
     } else {
       const stmt = db.prepare(adaptedSql);
-      const info = stmt.run(...params);
+      const info = stmt.run(...flatParams);
       // Return OkPacket-like object
       return [{ affectedRows: info.changes, insertId: info.lastInsertRowid, changes: info.changes }, []];
     }
