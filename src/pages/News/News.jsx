@@ -133,17 +133,20 @@ const News = () => {
         {/* Articles list */}
         <Grid container spacing={4}>
           {filteredArticles.map((article) => (
-            <Grid item xs={12} sm={6} md={4} key={article.id}>
+            <Grid item xs={12} md={6} lg={6} xl={4} key={article.id}>
               <Card 
                 onClick={() => setSelectedArticle(article)}
                 sx={{ 
+                  width: '100%',
                   height: '100%', 
                   display: 'flex', 
                   flexDirection: 'column',
                   cursor: 'pointer',
+                  borderRadius: 4,
+                  overflow: 'hidden'
                 }}
               >
-                <Box sx={{ overflow: 'hidden', height: 210 }}>
+                <Box sx={{ width: '100%', aspectRatio: '16/9', overflow: 'hidden' }}>
                   <Box
                     component="img"
                     src={article.image}

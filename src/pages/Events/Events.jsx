@@ -217,8 +217,8 @@ const Events = () => {
         {/* Events Grid */}
         <Grid container spacing={4}>
           {filteredEvents.map((event) => (
-            <Grid item xs={12} sm={6} md={4} key={event.id}>
-              <Box onClick={() => setSelectedEvent(event)} sx={{ cursor: 'pointer' }}>
+            <Grid item xs={12} md={6} lg={6} xl={4} key={event.id}>
+              <Box onClick={() => setSelectedEvent(event)} sx={{ cursor: 'pointer', width: '100%' }}>
                 <EventCard event={event} />
               </Box>
             </Grid>

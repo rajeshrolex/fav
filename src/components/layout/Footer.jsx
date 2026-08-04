@@ -51,10 +51,18 @@ const Footer = () => {
         borderColor: 'divider',
       }}
     >
-      <Container maxWidth="lg">
+      <Container
+        maxWidth={false}
+        sx={{
+          maxWidth: '1440px !important',
+          width: '100%',
+          mx: 'auto',
+          px: { xs: '24px', sm: '24px', md: '24px', lg: '24px', xl: '24px' },
+        }}
+      >
         <Grid container spacing={4} sx={{ mb: 6 }}>
           {/* Column 1: Brand & Contact Info */}
-          <Grid xs={12} md={4}>
+          <Grid item xs={12} md={4}>
             <Typography
               variant="h5"
               sx={{
@@ -111,7 +119,7 @@ const Footer = () => {
           </Grid>
 
           {/* Column 2: Sitemap & Legal */}
-          <Grid xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <Typography variant="h6" sx={{ color: '#FFFFFF', fontWeight: 700, mb: 3, fontSize: '1rem' }}>
               Quick Links
             </Typography>
@@ -158,7 +166,7 @@ const Footer = () => {
           </Grid>
 
           {/* Column 3: Newsletter Sign-up */}
-          <Grid xs={12} sm={6} md={2}>
+          <Grid item xs={12} sm={6} md={2}>
             <Typography variant="h6" sx={{ color: '#FFFFFF', fontWeight: 700, mb: 3, fontSize: '1rem' }}>
               Newsletter
             </Typography>
@@ -217,7 +225,7 @@ const Footer = () => {
           </Grid>
 
           {/* Column 4: Google Map Embed */}
-          <Grid xs={12} md={3}>
+          <Grid item xs={12} md={3}>
             <Typography variant="h6" sx={{ color: '#FFFFFF', fontWeight: 700, mb: 3, fontSize: '1rem' }}>
               Our Location
             </Typography>

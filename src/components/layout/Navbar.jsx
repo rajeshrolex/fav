@@ -57,7 +57,15 @@ const Navbar = () => {
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
-        <Container maxWidth="xl">
+        <Container
+          maxWidth={false}
+          sx={{
+            maxWidth: '1440px !important',
+            width: '100%',
+            mx: 'auto',
+            px: { xs: '24px', sm: '24px', md: '24px', lg: '24px', xl: '24px' },
+          }}
+        >
           <Toolbar disableGutters sx={{ justifyContent: 'space-between', height: { xs: 70, md: 80 } }}>
             {/* Logo */}
             <Typography

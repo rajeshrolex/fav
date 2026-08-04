@@ -24,7 +24,15 @@ const PageHeader = ({ title, subtitle, backgroundImage }) => {
         pt: 8, // space for fixed navbar
       }}
     >
-      <Container maxWidth="lg">
+      <Container
+        maxWidth={false}
+        sx={{
+          maxWidth: '1440px !important',
+          width: '100%',
+          mx: 'auto',
+          px: { xs: '24px', sm: '24px', md: '24px', lg: '24px', xl: '24px' },
+        }}
+      >
         <Box sx={{ py: 4 }}>
           {/* Breadcrumbs */}
           <Breadcrumbs

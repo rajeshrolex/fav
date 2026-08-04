@@ -29,14 +29,25 @@ export const SectionWrapper = ({ children, bg = 'default', id, sx = {} }) => {
     <Box
       id={id}
       sx={{
-        py: { xs: 8, md: 12 },
+        py: { xs: 6, md: 10 },
         background: getBgColor(),
         position: 'relative',
         overflow: 'hidden',
+        width: '100%',
         ...sx,
       }}
     >
-      <Container maxWidth="lg">{children}</Container>
+      <Container
+        maxWidth={false}
+        sx={{
+          maxWidth: '1440px !important',
+          width: '100%',
+          mx: 'auto',
+          px: { xs: '24px', sm: '24px', md: '24px', lg: '24px', xl: '24px' },
+        }}
+      >
+        {children}
+      </Container>
     </Box>
   );
 };
@@ -311,9 +322,9 @@ export const FestivalHistoryPreview = ({ timeline = historyTimeline }) => {
         title="Our Festival History"
         subtitle="From a small neighborhood street corner to managing regional festivals with thousands of attendees."
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
         {timeline.slice(0, 3).map((item, idx) => (
-          <div key={idx} className="flex">
+          <div key={idx} className="flex w-full">
             <motion.div
               className="w-full"
               initial={{ opacity: 0, y: 30 }}
@@ -355,9 +366,9 @@ export const UpcomingEvents = ({ events = upcomingEvents }) => {
         title="Upcoming Events"
         subtitle="Participate in our upcoming cultural programs, social camps, and youth campaigns."
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
         {upcomingOnly.map((event) => (
-          <div key={event.id} className="flex">
+          <div key={event.id} className="flex w-full">
             <motion.div
               className="w-full"
               initial={{ opacity: 0, y: 25 }}
@@ -390,7 +401,7 @@ export const CommitteePreview = ({ members = committeeMembers }) => {
       />
       <Grid container spacing={4}>
         {members.slice(0, 4).map((member) => (
-          <Grid xs={12} sm={6} md={3} key={member.id}>
+          <Grid item xs={12} md={6} lg={6} xl={3} key={member.id}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -420,7 +431,7 @@ export const GalleryPreview = ({ items = galleryItems }) => {
         title="Recent Gallery Highlights"
         subtitle="Capturing moments of happiness, dedication, and teamwork during our community drives."
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
         {items.slice(0, 3).map((item) => (
           <div key={item.id} className="w-full">
             <GalleryCard item={item} />
@@ -447,7 +458,7 @@ export const Sponsors = ({ list = sponsors }) => {
       />
       <Grid container spacing={3} sx={{ justifyContent: 'center', alignItems: 'center' }}>
         {list.map((sponsor) => (
-          <Grid xs={6} sm={4} md={2} key={sponsor.id}>
+          <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={sponsor.id}>
             <SponsorCard sponsor={sponsor} />
           </Grid>
         ))}
@@ -554,7 +565,7 @@ export const LatestNewsPreview = ({ news = newsArticles }) => {
         title="Latest News & Articles"
         subtitle="Keep abreast of recent announcements, schedules, and press releases."
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
         {news.slice(0, 3).map((article) => {
           const img = article.featured_image || article.image;
           const date = article.publish_date || article.date;

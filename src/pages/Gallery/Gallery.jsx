@@ -119,7 +119,7 @@ const Gallery = () => {
         {/* Gallery Grid */}
         <Grid container spacing={3.5}>
           {filteredItems.map((item, idx) => (
-            <Grid item xs={12} sm={6} md={4} key={item.id}>
+            <Grid item xs={12} md={6} lg={6} xl={4} key={item.id}>
               <GalleryCard item={item} onSelect={() => setPhotoIndex(idx)} />
             </Grid>
           ))}

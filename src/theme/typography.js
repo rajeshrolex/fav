@@ -8,54 +8,54 @@ export const typography = {
   fontWeightBold: 700,
   h1: {
     fontFamily: '"Outfit", "Inter", sans-serif',
-    fontWeight: 700,
-    fontSize: '3rem',
-    lineHeight: 1.2,
+    fontWeight: 800,
+    fontSize: 'clamp(2rem, 5vw, 3.25rem)',
+    lineHeight: 1.15,
     letterSpacing: '-0.02em',
-    '@media (max-width:600px)': {
-      fontSize: '2.25rem',
+    '@media (max-width:768px)': {
+      fontSize: '2rem',
     },
   },
   h2: {
     fontFamily: '"Outfit", "Inter", sans-serif',
     fontWeight: 700,
-    fontSize: '2.25rem',
-    lineHeight: 1.3,
+    fontSize: 'clamp(1.65rem, 4vw, 2.5rem)',
+    lineHeight: 1.25,
     letterSpacing: '-0.01em',
-    '@media (max-width:600px)': {
-      fontSize: '1.75rem',
+    '@media (max-width:768px)': {
+      fontSize: '1.65rem',
     },
   },
   h3: {
     fontFamily: '"Outfit", "Inter", sans-serif',
-    fontWeight: 600,
-    fontSize: '1.75rem',
-    lineHeight: 1.35,
-    '@media (max-width:600px)': {
-      fontSize: '1.4rem',
+    fontWeight: 700,
+    fontSize: 'clamp(1.35rem, 3vw, 1.85rem)',
+    lineHeight: 1.3,
+    '@media (max-width:768px)': {
+      fontSize: '1.35rem',
     },
   },
   h4: {
     fontFamily: '"Outfit", "Inter", sans-serif',
-    fontWeight: 600,
-    fontSize: '1.5rem',
-    lineHeight: 1.4,
-    '@media (max-width:600px)': {
-      fontSize: '1.25rem',
+    fontWeight: 650,
+    fontSize: 'clamp(1.15rem, 2.5vw, 1.45rem)',
+    lineHeight: 1.35,
+    '@media (max-width:768px)': {
+      fontSize: '1.15rem',
     },
   },
   h5: {
     fontFamily: '"Outfit", "Inter", sans-serif',
-    fontWeight: 500,
-    fontSize: '1.25rem',
+    fontWeight: 600,
+    fontSize: 'clamp(1rem, 2vw, 1.25rem)',
     lineHeight: 1.4,
-    '@media (max-width:600px)': {
-      fontSize: '1.1rem',
+    '@media (max-width:768px)': {
+      fontSize: '1rem',
     },
   },
   h6: {
     fontFamily: '"Outfit", "Inter", sans-serif',
-    fontWeight: 500,
+    fontWeight: 600,
     fontSize: '1rem',
     lineHeight: 1.45,
   },

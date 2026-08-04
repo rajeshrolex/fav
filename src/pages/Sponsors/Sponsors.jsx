@@ -120,7 +120,7 @@ const Sponsors = () => {
           <SectionTitle badge="Premium Tier" title="Gold Sponsors" align="center" />
           <Grid container spacing={4} justifyContent="center">
             {goldSponsors.map(sponsor => (
-              <Grid item xs={12} sm={6} md={3} key={sponsor.id}>
+              <Grid item xs={12} md={6} lg={6} xl={4} key={sponsor.id}>
                 <SponsorCard sponsor={sponsor} />
               </Grid>
             ))}
@@ -134,7 +134,7 @@ const Sponsors = () => {
           <SectionTitle badge="Growth Partners" title="Silver Sponsors" align="center" />
           <Grid container spacing={3} justifyContent="center">
             {silverSponsors.map(sponsor => (
-              <Grid item xs={6} sm={4} md={3} key={sponsor.id}>
+              <Grid item xs={12} sm={6} md={6} lg={4} xl={3} key={sponsor.id}>
                 <SponsorCard sponsor={sponsor} />
               </Grid>
             ))}
@@ -146,9 +146,9 @@ const Sponsors = () => {
       {bronzeSponsors.length > 0 && (
         <SectionWrapper bg="paper">
           <SectionTitle badge="Supporter Tier" title="Bronze Sponsors" align="center" />
-          <Grid container spacing={2} justifyContent="center">
+          <Grid container spacing={2.5} justifyContent="center">
             {bronzeSponsors.map(sponsor => (
-              <Grid item xs={6} sm={3} md={2} key={sponsor.id}>
+              <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={sponsor.id}>
                 <SponsorCard sponsor={sponsor} />
               </Grid>
             ))}

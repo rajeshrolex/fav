@@ -224,14 +224,17 @@ const HeroBanner = () => {
                 />
 
                 <Container
-                  maxWidth="lg"
+                  maxWidth={false}
                   sx={{
                     position: 'relative',
                     zIndex: 3,
                     display: 'flex',
                     alignItems: 'center',
                     height: '100%',
-                    px: { xs: 2, sm: 3 },
+                    maxWidth: '1440px !important',
+                    width: '100%',
+                    mx: 'auto',
+                    px: { xs: '24px', sm: '24px', md: '24px', lg: '24px', xl: '24px' },
                     py: { xs: 5, md: 0 },
                   }}
                 >

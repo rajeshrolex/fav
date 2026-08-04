@@ -106,7 +106,7 @@ const Committee = () => {
         {/* Members Grid */}
         <Grid container spacing={4}>
           {filteredMembers.map((member) => (
-            <Grid item xs={12} sm={6} md={3} key={member.id}>
+            <Grid item xs={12} md={6} lg={6} xl={4} key={member.id}>
               <CommitteeCard member={member} />
             </Grid>
           ))}

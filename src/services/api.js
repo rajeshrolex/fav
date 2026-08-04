@@ -52,9 +52,11 @@ api.interceptors.response.use(
       message = 'Unable to connect to server. Please ensure backend server is running.';
     }
 
-    // Do not toast error on auth actions (check or login) to allow calling components to handle custom feedback cleanly
-    const isAuthRequest = error.config && error.config.url.includes('auth.php');
-    if (!isAuthRequest) {
+    // Do not toast error on auth actions or read-only GET requests (to avoid spamming popups on initial page loads)
+    const isAuthRequest = error.config && error.config.url && error.config.url.includes('auth.php');
+    const isGetRequest = error.config && error.config.method && error.config.method.toLowerCase() === 'get';
+
+    if (!isAuthRequest && !isGetRequest) {
       toast.error(message, { id: message });
     }
 

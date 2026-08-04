@@ -35,6 +35,7 @@ export const EventCard = ({ event }) => {
   return (
     <Card 
       sx={{ 
+        width: '100%',
         height: '100%', 
         display: 'flex', 
         flexDirection: 'column',
@@ -51,15 +52,12 @@ export const EventCard = ({ event }) => {
         }
       }}
     >
-      <Box sx={{ position: 'relative', overflow: 'hidden', pt: '56.25%' /* 16:9 Aspect Ratio */ }}>
+      <Box sx={{ position: 'relative', width: '100%', aspectRatio: '16/9', overflow: 'hidden' }}>
         <CardMedia
           component="img"
           image={image}
           alt={title}
           sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
             width: '100%',
             height: '100%',
             objectFit: 'cover',
@@ -96,7 +94,7 @@ export const EventCard = ({ event }) => {
         </Box>
       </Box>
 
-      <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 3.5 }}>
+      <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 3 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2.5, flexGrow: 1 }}>
           <Typography 
             variant="h4" 
@@ -129,7 +127,7 @@ export const EventCard = ({ event }) => {
           </Typography>
         </Box>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, borderTop: '1px solid', borderColor: 'divider', pt: 2.5, mb: 3.5 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, borderTop: '1px solid', borderColor: 'divider', pt: 2.5, mb: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, color: 'text.secondary' }}>
             <Calendar size={15} style={{ opacity: 0.8 }} />
             <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.85rem' }}>{formattedDate}</Typography>
@@ -162,14 +160,15 @@ export const EventCard = ({ event }) => {
 export const GalleryCard = ({ item, onSelect }) => {
   const { title, category, image } = item;
   return (
-    <motion.div whileHover={{ y: -5 }} transition={{ duration: 0.3 }}>
+    <motion.div style={{ width: '100%' }} whileHover={{ y: -5 }} transition={{ duration: 0.3 }}>
       <Box
         onClick={onSelect}
         sx={{
           position: 'relative',
+          width: '100%',
+          aspectRatio: '16/9',
           borderRadius: 4,
           overflow: 'hidden',
-          aspectRatio: '4/3',
           cursor: 'pointer',
           boxShadow: (theme) => theme.palette.mode === 'light' 
             ? '0px 8px 24px rgba(148, 163, 184, 0.15)' 
@@ -232,7 +231,7 @@ export const SponsorCard = ({ sponsor }) => {
   const isSilver = tier === 'Silver';
 
   return (
-    <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.3 }}>
+    <motion.div style={{ width: '100%' }} whileHover={{ scale: 1.03 }} transition={{ duration: 0.3 }}>
       <Paper
         component={Link}
         to={website}
@@ -242,8 +241,9 @@ export const SponsorCard = ({ sponsor }) => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          p: isGold ? 4 : isSilver ? 3 : 2,
-          height: isGold ? 160 : isSilver ? 130 : 100,
+          p: 3,
+          width: '100%',
+          minHeight: 120,
           borderRadius: 4,
           border: '1px solid',
           borderColor: isGold ? 'primary.light' : 'divider',
@@ -276,8 +276,9 @@ export const SponsorCard = ({ sponsor }) => {
           src={logo}
           alt={name}
           sx={{
+            width: 'auto',
             maxWidth: '80%',
-            maxHeight: '60%',
+            maxHeight: 50,
             objectFit: 'contain',
             filter: (theme) => theme.palette.mode === 'light' ? 'grayscale(30%)' : 'grayscale(10%) brightness(1.2)',
             transition: 'filter 0.3s ease',
@@ -293,7 +294,7 @@ export const SponsorCard = ({ sponsor }) => {
             mt: 1.5,
             color: 'text.secondary',
             fontWeight: 650,
-            fontSize: isGold ? '0.9rem' : '0.8rem',
+            fontSize: '0.85rem',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -312,13 +313,13 @@ export const CommitteeCard = ({ member }) => {
   const { name, role, department, image, bio, socials } = member;
 
   return (
-    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 3, textAlign: 'center', alignItems: 'center' }}>
+    <Card sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', p: 3, textAlign: 'center', alignItems: 'center' }}>
       <Avatar
         src={image}
         alt={name}
         sx={{
-          width: 120,
-          height: 120,
+          width: 110,
+          height: 110,
           mb: 2,
           border: '3px solid',
           borderColor: 'primary.main',
@@ -336,7 +337,7 @@ export const CommitteeCard = ({ member }) => {
           fontWeight: 600
         }}
       />
-      <Typography variant="h4" sx={{ fontWeight: 700, fontSize: '1.25rem', mb: 0.5 }}>
+      <Typography variant="h4" sx={{ fontWeight: 700, fontSize: '1.2rem', mb: 0.5 }}>
         {name}
       </Typography>
       <Typography variant="subtitle2" color="primary" sx={{ fontWeight: 600, mb: 2 }}>
