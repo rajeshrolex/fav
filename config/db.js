@@ -192,7 +192,57 @@ export async function initDb() {
         ['superadmin', 'superadmin@vikrin.org', passHash, 'Super Admin']
       );
     }
-    console.log('Database tables initialized successfully');
+
+    // Insert default hero slides if hero_slides table is empty
+    const [heroRows] = await pool.query('SELECT COUNT(*) as count FROM hero_slides');
+    if (heroRows[0].count === 0) {
+      const defaultSlides = [
+        [
+          'https://images.unsplash.com/photo-1514525253161-7a46d19cd819',
+          'Grand Celebration 2026',
+          'Experience the Ultimate Cultural Festival',
+          'Join thousands of attendees in celebrating music, art, culture, and community. Discover live performances, interactive workshops, and delicious culinary experiences.',
+          'Explore Events',
+          '/events',
+          'Become a Volunteer',
+          '/volunteer',
+          1
+        ],
+        [
+          'https://images.unsplash.com/photo-1492684223066-81342ee5ff30',
+          'Live Music & Performances',
+          'Unforgettable Nights & Vibrant Energy',
+          'Feel the rhythm of top artists and cultural performers on spectacular stages with immersive sound and visual design.',
+          'View Schedule',
+          '/events',
+          'Our Gallery',
+          '/gallery',
+          2
+        ],
+        [
+          'https://images.unsplash.com/photo-1533174072545-7a4b2a786c06',
+          'Community & Heritage',
+          'Celebrating Unity, Traditions & Creativity',
+          'A grand gathering bringing together diverse communities, local artisans, and creative storytellers.',
+          'Learn More',
+          '/about',
+          'Contact Us',
+          '/contact',
+          3
+        ]
+      ];
+
+      for (const slide of defaultSlides) {
+        await pool.query(
+          `INSERT INTO hero_slides 
+           (image_url, badge, heading, description, primary_btn_text, primary_btn_link, secondary_btn_text, secondary_btn_link, display_order) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          slide
+        );
+      }
+    }
+
+    console.log('Database tables and initial seed data initialized successfully');
   } catch (err) {
     console.error('Database initialization warning:', err.message);
   }

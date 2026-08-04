@@ -26,8 +26,39 @@ const slowZoom = keyframes`
 
 const responsiveWidths = [360, 375, 390, 430, 768, 1024, 1440, 1920];
 
+const DEFAULT_HERO_SLIDES = [
+  {
+    id: 'default-1',
+    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819',
+    badge: 'Grand Celebration 2026',
+    heading: 'Experience the Ultimate Cultural Festival',
+    description: 'Join thousands of attendees in celebrating music, art, culture, and community. Discover live performances, interactive workshops, and delicious culinary experiences.',
+    primaryBtn: { text: 'Explore Events', link: '/events' },
+    secondaryBtn: { text: 'Become a Volunteer', link: '/volunteer' }
+  },
+  {
+    id: 'default-2',
+    image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30',
+    badge: 'Live Music & Performances',
+    heading: 'Unforgettable Nights & Vibrant Energy',
+    description: 'Feel the rhythm of top artists and cultural performers on spectacular stages with immersive sound and visual design.',
+    primaryBtn: { text: 'View Schedule', link: '/events' },
+    secondaryBtn: { text: 'Our Gallery', link: '/gallery' }
+  },
+  {
+    id: 'default-3',
+    image: 'https://images.unsplash.com/photo-1533174072545-7a4b2a786c06',
+    badge: 'Community & Heritage',
+    heading: 'Celebrating Unity, Traditions & Creativity',
+    description: 'A grand gathering bringing together diverse communities, local artisans, and creative storytellers.',
+    primaryBtn: { text: 'Learn More', link: '/about' },
+    secondaryBtn: { text: 'Contact Us', link: '/contact' }
+  }
+];
+
 const buildImageUrl = (url, width) => {
   if (!url) return url;
+  if (!url.includes('images.unsplash.com')) return url;
   if (url.includes('w=')) {
     return url.replace(/([?&])w=\d+/, `$1w=${width}`);
   }
@@ -36,20 +67,22 @@ const buildImageUrl = (url, width) => {
   return `${url}${separator}w=${width}&auto=format&fit=crop`;
 };
 
-const buildSrcSet = (url) =>
-  responsiveWidths.map((width) => `${buildImageUrl(url, width)} ${width}w`).join(', ');
+const buildSrcSet = (url) => {
+  if (!url || !url.includes('images.unsplash.com')) return undefined;
+  return responsiveWidths.map((width) => `${buildImageUrl(url, width)} ${width}w`).join(', ');
+};
 
 const HeroBanner = () => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
-  const [slides, setSlides] = useState([]);
+  const [slides, setSlides] = useState(DEFAULT_HERO_SLIDES);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchSlides = async () => {
       try {
         const res = await api.get('/home.php');
-        if (res.success && res.data) {
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
           const mapped = res.data.map(slide => ({
             id: slide.id,
             image: slide.image_url,
@@ -78,7 +111,7 @@ const HeroBanner = () => {
     );
   }
 
-  if (slides.length === 0) return null;
+  const displaySlides = slides.length > 0 ? slides : DEFAULT_HERO_SLIDES;
 
   return (
     <Box
@@ -148,7 +181,7 @@ const HeroBanner = () => {
         navigation={true}
         grabCursor={true}
       >
-        {slides.map((slide) => (
+        {displaySlides.map((slide) => (
           <SwiperSlide key={slide.id}>
             {({ isActive }) => (
               <Box
