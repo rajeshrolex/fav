@@ -4,9 +4,13 @@ export async function getDashboardStats(req, res) {
   try {
     const today = new Date().toISOString().split('T')[0];
 
-    // Record today's visit
+    // Record today's visit (SQLite-compatible upsert)
     await pool.query(
-      'INSERT INTO visitor_stats (visit_date, hits) VALUES (?, 1) ON DUPLICATE KEY UPDATE hits = hits + 1',
+      'INSERT OR IGNORE INTO visitor_stats (visit_date, hits) VALUES (?, 0)',
+      [today]
+    );
+    await pool.query(
+      'UPDATE visitor_stats SET hits = hits + 1 WHERE visit_date = ?',
       [today]
     );
 

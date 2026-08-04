@@ -47,19 +47,9 @@ export async function updateSeo(req, res) {
 
   try {
     await pool.query(
-      `INSERT INTO seo_pages 
+      `INSERT OR REPLACE INTO seo_pages 
        (page_name, meta_title, meta_description, meta_keywords, og_title, og_description, og_image, twitter_title, twitter_description, twitter_image) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-       ON DUPLICATE KEY UPDATE 
-       meta_title=VALUES(meta_title), 
-       meta_description=VALUES(meta_description), 
-       meta_keywords=VALUES(meta_keywords), 
-       og_title=VALUES(og_title), 
-       og_description=VALUES(og_description), 
-       og_image=VALUES(og_image), 
-       twitter_title=VALUES(twitter_title), 
-       twitter_description=VALUES(twitter_description), 
-       twitter_image=VALUES(twitter_image)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         page_name,
         meta_title || null,
@@ -92,7 +82,7 @@ export async function updateSettings(req, res) {
 
     for (const [key, value] of Object.entries(input)) {
       await conn.query(
-        'INSERT INTO settings (key_name, key_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE key_value=VALUES(key_value)',
+        'INSERT OR REPLACE INTO settings (key_name, key_value) VALUES (?, ?)',
         [key, value !== null && value !== undefined ? String(value) : null]
       );
     }
