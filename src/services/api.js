@@ -48,12 +48,14 @@ api.interceptors.response.use(
         localStorage.removeItem('admin_user');
         window.location.href = '/admin-login';
       }
+    } else if (error.code === 'ERR_NETWORK' || !response) {
+      message = 'Unable to connect to server. Please ensure backend server is running.';
     }
 
     // Do not toast error on auth actions (check or login) to allow calling components to handle custom feedback cleanly
     const isAuthRequest = error.config && error.config.url.includes('auth.php');
     if (!isAuthRequest) {
-      toast.error(message);
+      toast.error(message, { id: message });
     }
 
     return Promise.reject(error);
