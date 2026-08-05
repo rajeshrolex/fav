@@ -8,7 +8,7 @@ router.use((req, res, next) => {
   const action = req.query.action;
   if (action) {
     if (req.method === 'POST') {
-      if (action === 'submit') return submitContactMessage(req, res);
+      if (action === 'submit' || action === 'send') return submitContactMessage(req, res);
       if (action === 'update_status') return requireAuth()(req, res, () => updateReplyStatus(req, res));
       if (action === 'delete') return requireAuth()(req, res, () => deleteContactMessage(req, res));
     }

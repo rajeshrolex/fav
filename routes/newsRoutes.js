@@ -8,7 +8,7 @@ router.use((req, res, next) => {
   const action = req.query.action;
   if (action) {
     if (req.method === 'POST') {
-      if (action === 'create') return requireAuth()(req, res, () => createNews(req, res));
+      if (action === 'create' || action === 'add') return requireAuth()(req, res, () => createNews(req, res));
       if (action === 'edit') return requireAuth()(req, res, () => editNews(req, res));
       if (action === 'delete') return requireAuth()(req, res, () => deleteNews(req, res));
     }

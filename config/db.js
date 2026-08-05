@@ -63,6 +63,8 @@ function getSqliteDb() {
 
 function adaptSql(sql) {
   return sql
+    // Convert INSERT IGNORE INTO -> INSERT OR IGNORE INTO
+    .replace(/INSERT\s+IGNORE\s+INTO/gi, 'INSERT OR IGNORE INTO')
     // ON DUPLICATE KEY UPDATE → INSERT OR REPLACE (simplified handling)
     .replace(/INSERT\s+INTO\s+settings\s*\(key_name,\s*key_value\)\s*VALUES\s*\(\?,\s*\?\)\s+ON\s+DUPLICATE\s+KEY\s+UPDATE\s+key_value\s*=\s*VALUES\s*\(key_value\)/gi,
       'INSERT OR REPLACE INTO settings (key_name, key_value) VALUES (?, ?)')

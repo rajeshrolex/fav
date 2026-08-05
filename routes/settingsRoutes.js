@@ -8,7 +8,8 @@ router.use((req, res, next) => {
   const action = req.query.action;
   if (action) {
     if (req.method === 'POST') {
-      if (action === 'seo') return requireAuth(['Super Admin', 'Admin'])(req, res, () => updateSeo(req, res));
+      if (action === 'seo' || action === 'update_seo') return requireAuth(['Super Admin', 'Admin'])(req, res, () => updateSeo(req, res));
+      if (action === 'update') return requireAuth(['Super Admin', 'Admin'])(req, res, () => updateSettings(req, res));
     }
   }
   next();

@@ -13,7 +13,7 @@ function sanitizeSubPath(subPath = '') {
 
 export async function listMedia(req, res) {
   try {
-    const subPath = sanitizeSubPath(req.query.path || '');
+    const subPath = sanitizeSubPath(req.query.path || req.query.folder || '');
     const targetDir = subPath ? path.join(uploadsDir, subPath) : uploadsDir;
 
     if (!fs.existsSync(targetDir) || !fs.statSync(targetDir).isDirectory()) {

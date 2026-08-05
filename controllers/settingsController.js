@@ -47,7 +47,7 @@ export async function updateSeo(req, res) {
 
   try {
     await pool.query(
-      `INSERT OR REPLACE INTO seo_pages 
+      `REPLACE INTO seo_pages 
        (page_name, meta_title, meta_description, meta_keywords, og_title, og_description, og_image, twitter_title, twitter_description, twitter_image) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
@@ -82,7 +82,7 @@ export async function updateSettings(req, res) {
 
     for (const [key, value] of Object.entries(input)) {
       await conn.query(
-        'INSERT OR REPLACE INTO settings (key_name, key_value) VALUES (?, ?)',
+        'REPLACE INTO settings (key_name, key_value) VALUES (?, ?)',
         [key, value !== null && value !== undefined ? String(value) : null]
       );
     }

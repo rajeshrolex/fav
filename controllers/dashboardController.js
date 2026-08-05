@@ -4,9 +4,9 @@ export async function getDashboardStats(req, res) {
   try {
     const today = new Date().toISOString().split('T')[0];
 
-    // Record today's visit (SQLite-compatible upsert)
+    // Record today's visit (Database-agnostic upsert)
     await pool.query(
-      'INSERT OR IGNORE INTO visitor_stats (visit_date, hits) VALUES (?, 0)',
+      'INSERT IGNORE INTO visitor_stats (visit_date, hits) VALUES (?, 0)',
       [today]
     );
     await pool.query(
@@ -52,7 +52,7 @@ export async function getDashboardStats(req, res) {
 export async function recordHit(req, res) {
   try {
     const today = new Date().toISOString().split('T')[0];
-    await pool.query('INSERT OR IGNORE INTO visitor_stats (visit_date, hits) VALUES (?, 0)', [today]);
+    await pool.query('INSERT IGNORE INTO visitor_stats (visit_date, hits) VALUES (?, 0)', [today]);
     await pool.query('UPDATE visitor_stats SET hits = hits + 1 WHERE visit_date = ?', [today]);
     return res.json({ success: true, message: 'Hit recorded', data: null });
   } catch (err) {

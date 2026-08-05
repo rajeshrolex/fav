@@ -84,11 +84,15 @@ export async function resetPassword(req, res) {
   }
 
   try {
-    const [rows] = await pool.query('SELECT id FROM users WHERE reset_token = ? AND reset_token_expires > NOW()', [token]);
+    const [rows] = await pool.query('SELECT id, reset_token_expires FROM users WHERE reset_token = ?', [token]);
     if (rows.length > 0) {
-      const hashed = await bcrypt.hash(password, 10);
-      await pool.query('UPDATE users SET password_hash = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?', [hashed, rows[0].id]);
-      return res.json({ success: true, message: 'Password reset successful. You can now log in with your new password.', data: null });
+      const user = rows[0];
+      const expiry = new Date(user.reset_token_expires);
+      if (expiry > new Date()) {
+        const hashed = await bcrypt.hash(password, 10);
+        await pool.query('UPDATE users SET password_hash = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?', [hashed, user.id]);
+        return res.json({ success: true, message: 'Password reset successful. You can now log in with your new password.', data: null });
+      }
     }
     return res.status(400).json({ success: false, message: 'Invalid or expired password reset token', data: null });
   } catch (err) {

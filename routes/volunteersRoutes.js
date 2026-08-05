@@ -8,8 +8,8 @@ router.use((req, res, next) => {
   const action = req.query.action;
   if (action) {
     if (req.method === 'POST') {
-      if (action === 'apply') return applyVolunteer(req, res);
-      if (action === 'update_status') return requireAuth()(req, res, () => updateVolunteerStatus(req, res));
+      if (action === 'apply' || action === 'register') return applyVolunteer(req, res);
+      if (action === 'update_status' || action === 'status') return requireAuth()(req, res, () => updateVolunteerStatus(req, res));
       if (action === 'delete') return requireAuth()(req, res, () => deleteVolunteer(req, res));
     }
   }

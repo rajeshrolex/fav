@@ -16,17 +16,17 @@ router.get('/', getHistoryEvents);
 router.post('/', (req, res, next) => {
   const action = req.query.action;
   if (action === 'add' || action === 'add_timeline') {
-    return requireAuth(req, res, () => addHistoryEvent(req, res));
+    return requireAuth()(req, res, () => addHistoryEvent(req, res));
   } else if (action === 'edit' || action === 'edit_timeline') {
-    return requireAuth(req, res, () => updateHistoryEvent(req, res));
+    return requireAuth()(req, res, () => updateHistoryEvent(req, res));
   } else if (action === 'delete' || action === 'delete_timeline') {
-    return requireAuth(req, res, () => deleteHistoryEvent(req, res));
+    return requireAuth()(req, res, () => deleteHistoryEvent(req, res));
   }
-  return requireAuth(req, res, () => addHistoryEvent(req, res));
+  return requireAuth()(req, res, () => addHistoryEvent(req, res));
 });
 
 // Standard REST verbs
-router.put('/:id', requireAuth, updateHistoryEvent);
-router.delete('/:id', requireAuth, deleteHistoryEvent);
+router.put('/:id', requireAuth(), updateHistoryEvent);
+router.delete('/:id', requireAuth(), deleteHistoryEvent);
 
 export default router;

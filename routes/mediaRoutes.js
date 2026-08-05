@@ -19,6 +19,7 @@ router.use((req, res, next) => {
   next();
 });
 
+router.get('/', requireAuth(['Super Admin', 'Admin', 'Editor']), listMedia);
 router.get('/list', requireAuth(['Super Admin', 'Admin', 'Editor']), listMedia);
 router.post('/create-folder', requireAuth(['Super Admin', 'Admin', 'Editor']), createFolder);
 router.post('/delete', requireAuth(['Super Admin', 'Admin', 'Editor']), deleteMediaItem);

@@ -95,7 +95,7 @@ export async function updateAboutDetails(req, res) {
 
     for (const [key, val] of Object.entries(input)) {
       await conn.query(
-        'INSERT OR REPLACE INTO settings (key_name, key_value) VALUES (?, ?)',
+        'REPLACE INTO settings (key_name, key_value) VALUES (?, ?)',
         [key, val !== null && val !== undefined ? String(val) : null]
       );
     }
