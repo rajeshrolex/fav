@@ -1,0 +1,18 @@
+Options -Indexes
+Options -MultiViews
+
+# Allow PHP to run in this directory
+<FilesMatch "\.php$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+
+# Block direct access to non-PHP files for security
+<FilesMatch "\.(sqlite|db|log|sh|bak)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Allow CORS preflight from same origin
+Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS, DELETE, PUT"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
