@@ -2,24 +2,36 @@
   RewriteEngine On
   RewriteBase /
 
-  # Block access to hidden files (.env, .git, etc.)
+  # Block access to sensitive database & environment files
+  RewriteRule \.(sqlite|db|env|git|log|md|sql)$ - [F,L]
   RewriteRule "(^|/)\." - [F]
 
-  # Allow direct execution of requests targeting the api directory
-  RewriteCond %{REQUEST_URI} ^/api/ [NC]
-  RewriteRule ^ - [L]
+  # Handle OPTIONS HTTP preflight requests
+  RewriteCond %{REQUEST_METHOD} OPTIONS
+  RewriteRule ^(.*)$ $1 [R=200,L]
 
-  # Do not rewrite requests for existing physical files or directories
+  # Auto-rewrite /api/endpoint to /api/endpoint.php if .php file exists
+  RewriteCond %{DOCUMENT_ROOT}/api/$1.php -f
+  RewriteRule ^api/(.*)$ api/$1.php [L,QSA]
+
+  # Direct execution for requests targeting physical files or directories
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # Redirect all other single page app (SPA) routes to index.html
+  # Direct execution for API directory scripts
+  RewriteCond %{REQUEST_URI} ^/api/ [NC]
+  RewriteRule ^ - [L]
+
+  # Redirect all other Single Page App (SPA) routes to index.html
   RewriteRule ^ index.html [L]
 </IfModule>
 
-# Security Headers
+# Security & CORS Headers
 <IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
+  Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+  Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set X-XSS-Protection "1; mode=block"
