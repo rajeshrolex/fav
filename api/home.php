@@ -27,8 +27,11 @@ if ($method === 'POST') {
         requireAuth();
         $heading = sanitize($body['heading'] ?? $body['title'] ?? '');
         $image   = sanitize($body['image_url'] ?? $body['image'] ?? '');
-        if ($heading === '' || $image === '') {
-            json_error('Image URL and heading are required');
+        if ($image === '') {
+            $image = 'https://images.unsplash.com/photo-1501183007986-d0d080b147f9?q=80&w=600';
+        }
+        if ($heading === '') {
+            json_error('Banner title / heading is required');
         }
 
         try {
@@ -60,8 +63,11 @@ if ($method === 'POST') {
         $id      = sanitizeInt($body['id'] ?? 0);
         $heading = sanitize($body['heading'] ?? $body['title'] ?? '');
         $image   = sanitize($body['image_url'] ?? $body['image'] ?? '');
-        if (!$id || $heading === '' || $image === '') {
-            json_error('Slide ID, Image URL, and heading are required');
+        if ($image === '') {
+            $image = 'https://images.unsplash.com/photo-1501183007986-d0d080b147f9?q=80&w=600';
+        }
+        if (!$id || $heading === '') {
+            json_error('Slide ID and heading are required');
         }
 
         try {
