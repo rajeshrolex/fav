@@ -3,15 +3,16 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import mysql from 'mysql2/promise';
+import { createRequire } from 'module';
 
+const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DB_PATH = path.resolve(__dirname, '../api/database.sqlite');
 
 // Dynamically import better-sqlite3 to prevent crash if not installed/compiled
 let Database;
 try {
-  const sqliteModule = await import('better-sqlite3');
-  Database = sqliteModule.default;
+  Database = require('better-sqlite3');
 } catch (err) {
   console.log('⚠️ better-sqlite3 is not available. Using MySQL fallback if configured.');
 }
