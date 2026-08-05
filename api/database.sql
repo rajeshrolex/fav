@@ -4,11 +4,11 @@
 -- Hostinger Shared Hosting / cPanel / phpMyAdmin
 -- ============================================================================
 
-CREATE DATABASE IF NOT EXISTS `u177524058_Org_Temp`
+CREATE DATABASE IF NOT EXISTS `u882069120_FAV`
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
-USE `u177524058_Org_Temp`;
+USE `u882069120_FAV`;
 
 SET FOREIGN_KEY_CHECKS = 0;
 

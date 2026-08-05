@@ -3,9 +3,9 @@
 
 define('DB_HOST', 'localhost');
 define('DB_PORT', '3306');
-define('DB_USER', 'u177524058_Org_Temp');
-define('DB_PASS', 'Vikrin@199');
-define('DB_NAME', 'u177524058_Org_Temp');
+define('DB_USER', 'u882069120_FAV');
+define('DB_PASS', 'Sandanithin@2026');
+define('DB_NAME', 'u882069120_FAV');
 
 $pdo = null;
 
